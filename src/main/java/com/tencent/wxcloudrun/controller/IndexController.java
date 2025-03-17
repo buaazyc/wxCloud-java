@@ -1,22 +1,45 @@
 package com.tencent.wxcloudrun.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tencent.wxcloudrun.config.ApiResponse;
+import com.tencent.wxcloudrun.dto.WxRequest;
 
 /**
- * index控制器
+ * 微信消息处理控制器
  */
-@Controller
+@RestController
 
 public class IndexController {
 
-  /**
-   * 主页页面
-   * @return API response html
-   */
-  @GetMapping
-  public String index() {
-    return "index";
+  private final Logger logger;
+
+  public IndexController() {
+    this.logger = LoggerFactory.getLogger(IndexController.class);
   }
 
+  /**
+   * 处理微信消息请求
+   * 
+   * @param request 微信请求参数
+   * @return 响应消息
+   */
+  @PostMapping
+  ApiResponse create(@RequestBody WxRequest request) {
+    if (request == null) {
+      logger.error("接收到空的微信请求");
+      return ApiResponse.error("无效的请求参数");
+    }
+    logger.info("收到消息 {}", request);
+    return ApiResponse.wxMessage(
+        request.getFromUserName(),
+        request.getToUserName(),
+        request.getCreateTime(),
+        "text",
+        "Hello World");
+  }
 }

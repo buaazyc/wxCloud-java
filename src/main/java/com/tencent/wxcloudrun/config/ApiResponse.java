@@ -1,8 +1,8 @@
 package com.tencent.wxcloudrun.config;
 
-import lombok.Data;
-
 import java.util.HashMap;
+
+import lombok.Data;
 
 @Data
 public final class ApiResponse {
@@ -11,12 +11,28 @@ public final class ApiResponse {
   private String errorMsg;
   private Object data;
 
+  private String ToUserName;
+  private String FromUserName;
+  private Integer CreateTime;
+  private String MsgType;
+  private String Content;
+
   private ApiResponse(int code, String errorMsg, Object data) {
     this.code = code;
     this.errorMsg = errorMsg;
     this.data = data;
   }
-  
+
+  public static ApiResponse wxMessage(String toUser, String fromUser,Integer ctime, String msgType, String content) {
+    ApiResponse response = new ApiResponse(0, "", new HashMap<>());
+    response.setToUserName(toUser);
+    response.setFromUserName(fromUser);
+    response.setCreateTime(ctime);
+    response.setMsgType(msgType);
+    response.setContent(content);
+    return response;
+  }
+
   public static ApiResponse ok() {
     return new ApiResponse(0, "", new HashMap<>());
   }
