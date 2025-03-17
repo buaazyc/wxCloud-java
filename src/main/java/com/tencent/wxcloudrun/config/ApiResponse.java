@@ -2,6 +2,8 @@ package com.tencent.wxcloudrun.config;
 
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -11,11 +13,16 @@ public final class ApiResponse {
   private String errorMsg;
   private Object data;
 
-  private String ToUserName;
-  private String FromUserName;
-  private Integer CreateTime;
-  private String MsgType;
-  private String Content;
+  @JsonProperty("ToUserName")
+  private String toUserName;
+  @JsonProperty("FromUserName")
+  private String fromUserName;
+  @JsonProperty("CreateTime")
+  private Integer createTime;
+  @JsonProperty("MsgType")
+  private String msgType;
+  @JsonProperty("Content")
+  private String content;
 
   private ApiResponse(int code, String errorMsg, Object data) {
     this.code = code;
@@ -23,7 +30,7 @@ public final class ApiResponse {
     this.data = data;
   }
 
-  public static ApiResponse wxMessage(String toUser, String fromUser,Integer ctime, String msgType, String content) {
+  public static ApiResponse wxMessage(String toUser, String fromUser, Integer ctime, String msgType, String content) {
     ApiResponse response = new ApiResponse(0, "", new HashMap<>());
     response.setToUserName(toUser);
     response.setFromUserName(fromUser);
