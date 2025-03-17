@@ -7,16 +7,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tencent.wxcloudrun.config.ApiResponse;
+import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dto.WxRequest;
+import com.tencent.wxcloudrun.model.Access;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * 微信消息处理控制器
  */
 @RestController
+@RequiredArgsConstructor
 
 public class IndexController {
 
   private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+  private final AccessMapper accessMapper;
 
   /**
    * 处理微信消息请求
@@ -41,6 +47,9 @@ public class IndexController {
         req.getContent());
 
     logger.info("回复消息： {}", rsp);
+
+    // 记录访问日志
+    accessMapper.insertAccess(new Access(req, rsp));
     return rsp;
   }
 }

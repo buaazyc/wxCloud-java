@@ -3,7 +3,7 @@
 <mapper namespace="com.tencent.wxcloudrun.dao.AccessMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="AccessMap" type="com.tencent.wxcloudrun.model.Access">
+    <resultMap id="AccessMapper" type="com.tencent.wxcloudrun.model.Access">
         <id property="msgId" column="msg_id" />
         <result property="msgType" column="msg_type" />
         <result property="fromUserName" column="from_user_name" />

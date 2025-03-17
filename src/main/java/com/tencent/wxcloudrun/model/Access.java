@@ -2,6 +2,9 @@ package com.tencent.wxcloudrun.model;
 
 import java.io.Serializable;
 
+import com.tencent.wxcloudrun.config.ApiResponse;
+import com.tencent.wxcloudrun.dto.WxRequest;
+
 import lombok.Data;
 
 /**
@@ -30,4 +33,14 @@ public class Access implements Serializable {
 
     /** 响应内容 */
     private String rsp;
+
+    public Access(WxRequest req, ApiResponse rsp) {
+        this.msgId = req.getMsgId();
+        this.msgType = req.getMsgType();
+        this.fromUserName = req.getFromUserName();
+        this.toUserName = req.getToUserName();
+        this.createTime = req.getCreateTime();
+        this.req = req.getContent();
+        this.rsp = rsp.getContent();
+    }
 }
