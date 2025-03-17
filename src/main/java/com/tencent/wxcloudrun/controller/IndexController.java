@@ -35,11 +35,13 @@ public class IndexController {
       return ApiResponse.error("无效的请求参数");
     }
     logger.info("收到消息 {}", request);
-    return ApiResponse.wxMessage(
+    ApiResponse rsp = ApiResponse.wxMessage(
         request.getFromUserName(),
         request.getToUserName(),
         request.getCreateTime(),
         "text",
         "Hello World");
+    logger.info("回复消息 {}", rsp);
+    return rsp;
   }
 }

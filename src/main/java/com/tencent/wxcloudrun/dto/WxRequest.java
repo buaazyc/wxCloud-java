@@ -18,6 +18,9 @@ public class WxRequest {
     @JsonProperty("MsgType")
     private String msgType;
 
+    @JsonProperty("Content")
+    private String content;
+
     @JsonProperty("MsgId")
     private String msgId;
 }
