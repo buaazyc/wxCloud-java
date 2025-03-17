@@ -28,7 +28,7 @@ public class IndexController {
    * @param request 微信请求参数
    * @return 响应消息
    */
-  @PostMapping
+  @PostMapping(value = "/index")
   ApiResponse create(@RequestBody WxRequest request) {
     if (request == null) {
       logger.error("接收到空的微信请求");
