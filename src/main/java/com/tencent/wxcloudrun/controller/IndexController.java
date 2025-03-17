@@ -16,32 +16,31 @@ import com.tencent.wxcloudrun.dto.WxRequest;
 
 public class IndexController {
 
-  private final Logger logger;
-
-  public IndexController() {
-    this.logger = LoggerFactory.getLogger(IndexController.class);
-  }
+  private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
   /**
    * 处理微信消息请求
    * 
-   * @param request 微信请求参数
+   * @param req 微信请求参数
    * @return 响应消息
    */
-  @PostMapping(value = "/index")
-  ApiResponse create(@RequestBody WxRequest request) {
-    if (request == null) {
+  @PostMapping("/index")
+  public ApiResponse create(@RequestBody WxRequest req) {
+    if (req == null) {
       logger.error("接收到空的微信请求");
       return ApiResponse.error("无效的请求参数");
     }
-    logger.info("收到消息 {}", request);
+
+    logger.info("收到消息： {}", req);
+
     ApiResponse rsp = ApiResponse.wxMessage(
-        request.getFromUserName(),
-        request.getToUserName(),
-        request.getCreateTime(),
+        req.getFromUserName(),
+        req.getToUserName(),
+        req.getCreateTime(),
         "text",
-        "Hello World");
-    logger.info("回复消息 {}", rsp);
+        req.getContent());
+
+    logger.info("回复消息： {}", rsp);
     return rsp;
   }
 }
