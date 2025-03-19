@@ -1,7 +1,6 @@
 server:
   port: 80
 
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,6 +11,9 @@ spring:
     view:
       suffix: .html
       prefix: /
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml

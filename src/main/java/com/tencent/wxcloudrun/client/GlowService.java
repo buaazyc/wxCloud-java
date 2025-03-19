@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ public class GlowService {
 
     private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
 
+    @Cacheable()
     public String getAll(String address) {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < events.length; i++) {
