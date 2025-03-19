@@ -22,40 +22,18 @@ public class GlowService {
 
     private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
 
-    // @Value("${DATACLOUD_API_KEY}")
-    // private String apiKey;
-
-    // public Glow get(String address) {
-    // // 创建格式化器
-    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
-    // // 获取当前日期时间
-    // LocalDateTime now = LocalDateTime.now();
-    // // 获取今天0点
-    // LocalDateTime todayStart = now.toLocalDate().atStartOfDay();
-    // // 获取3天后的0点
-    // LocalDateTime threeDaysLater = todayStart.plusDays(3);
-    // // 格式化日期时间
-    // String start = todayStart.format(formatter);
-    // String end = threeDaysLater.format(formatter);
-    // String url =
-    // "https://tiles.geovisearth.com/meteorology/v1/weather/grid/glow/day/data?location="
-    // + address
-    // + "&start=" + start + "&end=" + end
-    // + "&meteCodes=aod,glow&level=true&token=" + apiKey;
-    // return restTemplate.getForObject(url, Glow.class);
-    // }
-
     public String getAll(String address) {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < events.length; i++) {
             glows[i] = get(address, events[i]);
+            log.info("glows[i]:{}", glows[i].toString());
         }
         if (!glows[0].ok()) {
             return "";
         }
         String content = glows[0].getFormattedSummary();
         for (Glow glow : glows) {
-            content += glow.toString() + "\n";
+            content += glow.format() + "\n";
         }
         return content;
     }

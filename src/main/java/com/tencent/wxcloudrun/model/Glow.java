@@ -38,7 +38,7 @@ public class Glow implements Serializable {
     private String status;
 
     public boolean ok() {
-        return status == "ok";
+        return "ok".equals(status);
     }
 
     // 获取格式化后的AOD值
@@ -65,7 +65,7 @@ public class Glow implements Serializable {
         return cleanText.split("】")[0] + "】";
     }
 
-    public String toString() {
+    public String format() {
         return getFormattedEventTime() + " 概率: " + getFormattedQuality();
     }
 }
