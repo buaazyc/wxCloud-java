@@ -20,7 +20,7 @@ public class GlowService {
 
     private static final String IP_URL = "https://sunsetbot.top/";
 
-    private static final String[] events = { "rise_1", "Set_1", "rise_2", "set_2" };
+    private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
 
     // @Value("${DATACLOUD_API_KEY}")
     // private String apiKey;
@@ -46,8 +46,8 @@ public class GlowService {
     // }
 
     public Glow get(String address, Integer index) {
-        String url = String.format("%s?intend=select_city&query_city=%s&event_date=None&event=%s&times=None", IP_URL,
-                address, events[index]);
+        String url = String.format("%s?intend=select_city&query_city=%s&event_date=None&event=%s",
+                IP_URL, address, events[index]);
         log.info("glow url:{}", url);
         // 创建请求头
         HttpHeaders headers = new HttpHeaders();
