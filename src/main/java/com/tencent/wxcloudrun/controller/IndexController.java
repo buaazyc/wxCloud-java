@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tencent.wxcloudrun.client.GeoCode;
+import com.tencent.wxcloudrun.client.GeoCodeService;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dto.WxRequest;
 import com.tencent.wxcloudrun.model.Access;
+import com.tencent.wxcloudrun.model.Geocode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,7 @@ public class IndexController {
 
   private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
   private final AccessMapper accessMapper;
-  private GeoCode geoCode;
+  private final GeoCodeService geoCodeService;
 
   /**
    * 处理微信消息请求
@@ -57,7 +58,7 @@ public class IndexController {
     // 记录访问日志
     accessMapper.insertAccess(new Access(headers, req, rsp));
 
-    String geoCodeRes = geoCode.get("北京");
+    Geocode geoCodeRes = geoCodeService.get("北京");
     logger.info("geoCodeRes: {}", geoCodeRes);
     return rsp;
   }
