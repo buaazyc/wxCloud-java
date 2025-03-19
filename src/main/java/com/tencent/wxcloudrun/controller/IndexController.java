@@ -59,7 +59,7 @@ public class IndexController {
     accessMapper.insertAccess(new Access(headers, req, rsp));
 
     Geocode geoCodeRes = geoCodeService.get("北京");
-    logger.info("geoCodeRes: {}", geoCodeRes);
+    logger.info("geoCodeRes: {} {}", geoCodeRes, geoCodeRes.getLocation());
     return rsp;
   }
 }

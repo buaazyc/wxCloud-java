@@ -20,4 +20,12 @@ public class Geocode implements Serializable {
         @JsonProperty("location")
         private String location;
     }
+
+    public double[] getLocation() {
+        if (null == geocodes || geocodes.length == 0)
+            return null;
+        String location = geocodes[0].getLocation();
+        String[] latlng = location.split(",");
+        return new double[] { Double.parseDouble(latlng[0]), Double.parseDouble(latlng[1]) };
+    }
 }

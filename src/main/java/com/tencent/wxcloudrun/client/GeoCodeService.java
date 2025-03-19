@@ -16,7 +16,6 @@ public class GeoCodeService {
     @Value("${AMAP_API_KEY}")
     private String apiKey;
 
-    // https://restapi.amap.com/v3/geocode/geo?address=%E5%8C%97%E4%BA%AC&key=2f19b91a99aac78221146ddd5b40f5c8
     public Geocode get(String address) {
         // todo: 这里的key要改成放在配置文件中
         return restTemplate.getForObject(
