@@ -1,9 +1,12 @@
 package com.tencent.wxcloudrun.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tencent.wxcloudrun.config.ApiResponse;
@@ -31,13 +34,13 @@ public class IndexController {
    * @return 响应消息
    */
   @PostMapping("/index")
-  public ApiResponse create(@RequestBody WxRequest req) {
+  public ApiResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
     if (req == null) {
       logger.error("接收到空的微信请求");
       return ApiResponse.error("无效的请求参数");
     }
 
-    logger.info("收到消息： {}", req);
+    logger.info("收到消息： {} {}", headers, req);
 
     ApiResponse rsp = ApiResponse.wxMessage(
         req.getFromUserName(),
