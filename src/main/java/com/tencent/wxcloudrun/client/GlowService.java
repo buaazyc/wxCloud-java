@@ -31,7 +31,7 @@ public class GlowService {
         if (!glows[0].ok()) {
             return "";
         }
-        String content = glows[0].getFormattedSummary();
+        String content = glows[0].getFormattedSummary() + "火烧云概率：\n";
         for (Glow glow : glows) {
             content += glow.format() + "\n";
         }
