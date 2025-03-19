@@ -66,6 +66,6 @@ public class Glow implements Serializable {
     }
 
     public String format() {
-        return getFormattedEventTime() + "🔥" + getFormattedQuality();
+        return getFormattedEventTime() + "\n质量：" + getFormattedQuality();
     }
 }
