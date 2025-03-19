@@ -9,13 +9,14 @@
         <result property="fromUserName" column="from_user_name" />
         <result property="toUserName" column="to_user_name" />
         <result property="createTime" column="create_time" />
+        <result property="header" column="header" />
         <result property="req" column="req" />
         <result property="rsp" column="rsp" />
     </resultMap>
 
     <!-- 插入访问记录 -->
     <insert id="insertAccess" parameterType="com.tencent.wxcloudrun.model.Access"> INSERT INTO
-        t_access_record ( msg_id, msg_type, from_user_name, to_user_name, create_time, req, rsp )
-        VALUES ( #{msgId}, #{msgType}, #{fromUserName}, #{toUserName}, #{createTime}, #{req}, #{rsp}
-        ) </insert>
+        t_access_record ( msg_id, msg_type, from_user_name, to_user_name, create_time, header, req,
+        rsp ) VALUES ( #{msgId}, #{msgType}, #{fromUserName}, #{toUserName}, #{createTime},
+        #{header}, #{req}, #{rsp} ) </insert>
 </mapper>

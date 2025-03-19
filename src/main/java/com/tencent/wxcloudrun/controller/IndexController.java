@@ -52,7 +52,7 @@ public class IndexController {
     logger.info("回复消息： {}", rsp);
 
     // 记录访问日志
-    accessMapper.insertAccess(new Access(req, rsp));
+    accessMapper.insertAccess(new Access(headers, req, rsp));
     return rsp;
   }
 }
