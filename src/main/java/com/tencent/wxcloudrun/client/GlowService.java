@@ -42,7 +42,8 @@ public class GlowService {
     // }
 
     public Glow get(String address, Integer index) {
-        String url = String.format("%s?&query_city=%s&event=%s", IP_URL, address, events[index]);
+        String url = String.format("%s?intend=select_city&query_city=%s&event_date=None&event=%s&times=None", IP_URL,
+                address, events[index]);
         return restTemplate.getForObject(url, Glow.class);
     }
 }
