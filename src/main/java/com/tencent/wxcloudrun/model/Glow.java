@@ -31,7 +31,7 @@ public class Glow implements Serializable {
     @JsonProperty("tb_event_time")
     private String eventTime;
 
-    @JsonProperty("place_holder")
+    @JsonProperty("tb_quality")
     private String quality;
 
 }
