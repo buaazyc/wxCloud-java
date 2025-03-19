@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tencent.wxcloudrun.client.GeoCodeService;
+import com.tencent.wxcloudrun.client.GlowService;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dto.WxRequest;
 import com.tencent.wxcloudrun.model.Access;
 import com.tencent.wxcloudrun.model.Geocode;
+import com.tencent.wxcloudrun.model.Glow;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,7 @@ public class IndexController {
   private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
   private final AccessMapper accessMapper;
   private final GeoCodeService geoCodeService;
+  private final GlowService glowService;
 
   /**
    * 处理微信消息请求
@@ -58,8 +61,13 @@ public class IndexController {
     // 记录访问日志
     accessMapper.insertAccess(new Access(headers, req, rsp));
 
+    // 根据地址获取经纬度
     Geocode geoCodeRes = geoCodeService.get("北京");
-    logger.info("geoCodeRes: {} {}", geoCodeRes, geoCodeRes.getLocation());
+    logger.info("geoCodeRes: {}", geoCodeRes);
+
+    // 根据经纬度获取天气信息
+    Glow glowRes = glowService.get(geoCodeRes.getLocation());
+    logger.info("glowRes: {}", glowRes);
     return rsp;
   }
 }

@@ -21,11 +21,15 @@ public class Geocode implements Serializable {
         private String location;
     }
 
-    public double[] getLocation() {
+    public String getLocation() {
         if (null == geocodes || geocodes.length == 0)
             return null;
-        String location = geocodes[0].getLocation();
-        String[] latlng = location.split(",");
+        return geocodes[0].getLocation();
+    }
+
+    public double[] getDoubleLocation() {
+        String[] latlng = getLocation().split(",");
         return new double[] { Double.parseDouble(latlng[0]), Double.parseDouble(latlng[1]) };
     }
+
 }
