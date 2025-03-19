@@ -1,14 +1,14 @@
 package com.tencent.wxcloudrun.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.tencent.wxcloudrun.model.Geocode;
 
+@Service
 public class GeoCodeService {
     private final RestTemplate restTemplate;
 
-    @Autowired
     public GeoCodeService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
