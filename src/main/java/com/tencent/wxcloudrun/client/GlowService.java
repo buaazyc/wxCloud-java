@@ -33,7 +33,7 @@ public class GlowService {
         }
         String content = glows[0].getFormattedSummary() + "火烧云情况：\n";
         for (Glow glow : glows) {
-            content += glow.format() + "\n";
+            content += "\n" + glow.format() + "\n";
         }
         return content;
     }
