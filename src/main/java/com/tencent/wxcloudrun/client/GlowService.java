@@ -1,6 +1,10 @@
 package com.tencent.wxcloudrun.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,6 +48,26 @@ public class GlowService {
     public Glow get(String address, Integer index) {
         String url = String.format("%s?intend=select_city&query_city=%s&event_date=None&event=%s&times=None", IP_URL,
                 address, events[index]);
-        return restTemplate.getForObject(url, Glow.class);
+        log.info("glow url:{}", url);
+        // 创建请求头
+        HttpHeaders headers = new HttpHeaders();
+        // 模拟Chrome浏览器
+        headers.set("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
+        headers.set("Accept", "application/json,text/plain,*/*");
+        headers.set("Accept-Language", "zh-CN,zh;q=0.9");
+        headers.set("Accept-Encoding", "gzip, deflate, br");
+        headers.set("Connection", "keep-alive");
+
+        // 创建带请求头的请求实体
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // 使用exchange方法发送请求
+        ResponseEntity<Glow> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Glow.class);
+        return response.getBody();
     }
 }
