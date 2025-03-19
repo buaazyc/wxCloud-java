@@ -34,6 +34,13 @@ public class Glow implements Serializable {
     @JsonProperty("tb_quality")
     private String quality;
 
+    @JsonProperty("status")
+    private String status;
+
+    public boolean ok() {
+        return status == "ok";
+    }
+
     // 获取格式化后的AOD值
     public String getFormattedAod() {
         return aod.replace("<br>", " ");
@@ -59,6 +66,6 @@ public class Glow implements Serializable {
     }
 
     public String toString() {
-        return getFormattedSummary() + getFormattedEventTime() + " 概率: " + getFormattedQuality();
+        return getFormattedEventTime() + " 概率: " + getFormattedQuality();
     }
 }

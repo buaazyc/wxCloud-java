@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tencent.wxcloudrun.client.GeoCodeService;
 import com.tencent.wxcloudrun.client.GlowService;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dao.AccessMapper;
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 public class IndexController {
 
   private final AccessMapper accessMapper;
-  private final GeoCodeService geoCodeService;
   private final GlowService glowService;
 
   /**
@@ -48,18 +46,14 @@ public class IndexController {
     log.info("收到消息： {} {}", headers, req);
 
     // 根据经纬度获取天气信息
-    Glow[] glowRes = glowService.getAll(req.getContent());
-    String content = "";
-    for (Glow glow : glowRes) {
-      content += glow.toString() + "\n";
-    }
+    String glowRes = glowService.getAll(req.getContent());
 
     ApiResponse rsp = ApiResponse.wxMessage(
         req.getFromUserName(),
         req.getToUserName(),
         req.getCreateTime(),
         "text",
-        content);
+        glowRes);
 
     log.info("回复消息： {}", rsp);
 

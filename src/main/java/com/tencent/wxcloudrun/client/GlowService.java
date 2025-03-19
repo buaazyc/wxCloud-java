@@ -45,12 +45,19 @@ public class GlowService {
     // return restTemplate.getForObject(url, Glow.class);
     // }
 
-    public Glow[] getAll(String address) {
+    public String getAll(String address) {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < events.length; i++) {
             glows[i] = get(address, events[i]);
         }
-        return glows;
+        if (!glows[0].ok()) {
+            return "";
+        }
+        String content = glows[0].getFormattedSummary();
+        for (Glow glow : glows) {
+            content += glow.toString() + "\n";
+        }
+        return content;
     }
 
     public Glow get(String address, String event) {
