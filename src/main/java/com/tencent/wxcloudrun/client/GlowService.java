@@ -45,9 +45,17 @@ public class GlowService {
     // return restTemplate.getForObject(url, Glow.class);
     // }
 
-    public Glow get(String address, Integer index) {
+    public Glow[] getAll(String address) {
+        Glow[] glows = new Glow[4];
+        for (int i = 0; i < events.length; i++) {
+            glows[i] = get(address, events[i]);
+        }
+        return glows;
+    }
+
+    public Glow get(String address, String event) {
         String url = String.format("%s?intend=select_city&query_city=%s&event_date=None&event=%s",
-                IP_URL, address, events[index]);
+                IP_URL, address, event);
         log.info("glow url:{}", url);
         // 创建请求头
         HttpHeaders headers = new HttpHeaders();

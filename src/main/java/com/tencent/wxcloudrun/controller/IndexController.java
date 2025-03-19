@@ -47,25 +47,24 @@ public class IndexController {
 
     log.info("收到消息： {} {}", headers, req);
 
+    // 根据经纬度获取天气信息
+    Glow[] glowRes = glowService.getAll(req.getContent());
+    String content = "";
+    for (Glow glow : glowRes) {
+      content += glow.toString() + "\n";
+    }
+
     ApiResponse rsp = ApiResponse.wxMessage(
         req.getFromUserName(),
         req.getToUserName(),
         req.getCreateTime(),
         "text",
-        req.getContent());
+        content);
 
     log.info("回复消息： {}", rsp);
 
     // 记录访问日志
     accessMapper.insertAccess(new Access(headers, req, rsp));
-
-    // 根据地址获取经纬度
-    // Geocode geoCodeRes = geoCodeService.get("深圳");
-    // log.info("geoCodeRes: {}", geoCodeRes);
-
-    // 根据经纬度获取天气信息
-    Glow glowRes = glowService.get("深圳", 1);
-    log.info("glowRes: {}", glowRes);
     return rsp;
   }
 }
