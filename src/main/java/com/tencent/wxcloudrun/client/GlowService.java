@@ -23,11 +23,11 @@ public class GlowService {
 
     private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
 
-    @Cacheable(value = "glowCache", key = "#tokens")
-    public String getAll(String[] tokens) {
+    @Cacheable(value = "glowCache", key = "#address")
+    public String getAll(String address) {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < events.length; i++) {
-            glows[i] = get(tokens[0], events[i]);
+            glows[i] = get(address, events[i]);
             log.info("glows[i]:{}", glows[i].toString());
         }
         if (!glows[0].ok()) {

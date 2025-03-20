@@ -28,8 +28,6 @@ public class IndexController {
   private final AccessMapper accessMapper;
   private final GlowService glowService;
 
-  private String[] tokens;
-
   /**
    * 处理微信消息请求
    * 
@@ -46,7 +44,7 @@ public class IndexController {
     log.info("收到消息： {} {}", headers, req);
 
     // 根据经纬度获取天气信息
-    String glowRes = glowService.getAll(tokens);
+    String glowRes = glowService.getAll(req.getContent().trim());
 
     ApiResponse rsp = ApiResponse.wxMessage(
         req.getFromUserName(),
@@ -60,16 +58,5 @@ public class IndexController {
     // 记录访问日志
     accessMapper.insertAccess(new Access(headers, req, rsp));
     return rsp;
-  }
-
-  public void parseContent(String content) {
-    if (content == null) {
-      return;
-    }
-    String trimmed = content.trim();
-    if (trimmed.isEmpty()) {
-      return;
-    }
-    tokens = trimmed.split("\\s+");
   }
 }
