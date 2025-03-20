@@ -12,7 +12,6 @@ import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dto.WxRequest;
 import com.tencent.wxcloudrun.model.Access;
-import com.tencent.wxcloudrun.model.Glow;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
