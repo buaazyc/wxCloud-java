@@ -1,7 +1,6 @@
 package com.tencent.wxcloudrun.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@CacheConfig(cacheNames = "users") // 类级缓存配置
 public class GlowService {
     @Autowired
     private RestTemplate restTemplate;
@@ -25,7 +23,7 @@ public class GlowService {
 
     private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
 
-    @Cacheable(value = "glowCache", key = "#address")
+    @Cacheable(value = "glow", key = "#address")
     public String getAll(String address) {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < events.length; i++) {
