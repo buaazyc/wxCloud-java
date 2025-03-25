@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "users") // 类级缓存配置
 public class GlowService {
     @Autowired
     private RestTemplate restTemplate;
