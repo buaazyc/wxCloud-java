@@ -37,8 +37,8 @@ public class IndexController {
   @PostMapping("/index")
   public ApiResponse create(@RequestHeader Map<String, String> headers,
       @RequestBody WxRequest req) {
-    if (req == null) {
-      return ApiResponse.error("无效的请求参数");
+    if (req == null || req.getContent() == null) {
+      return ApiResponse.ok();
     }
 
     log.info("收到消息： {} {}", headers, req);
