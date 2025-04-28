@@ -31,7 +31,7 @@ public final class ApiResponse {
   }
 
   public static ApiResponse wxMessage(String toUser, String fromUser, Integer ctime, String msgType, String content) {
-    ApiResponse response = new ApiResponse(200, "succ", new HashMap<>());
+    ApiResponse response = new ApiResponse(200, "success", new HashMap<>());
     response.setToUserName(toUser);
     response.setFromUserName(fromUser);
     response.setCreateTime(ctime);
