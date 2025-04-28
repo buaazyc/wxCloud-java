@@ -44,7 +44,7 @@ public class IndexController {
     log.info("收到消息： {} {}", headers, req);
 
     // 根据经纬度获取天气信息
-    String glowRes = glowService.getAll(req.getContent().trim());
+    String glowRes = glowService.getAll(req.getContent());
 
     ApiResponse rsp = ApiResponse.wxMessage(
         req.getFromUserName(),
