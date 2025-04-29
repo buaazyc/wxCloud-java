@@ -5,8 +5,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
+/**
+ * @author zhangyichuan
+ */
 @SpringBootApplication
-@MapperScan(basePackages = { "com.tencent.wxcloudrun.dao" })
+@MapperScan(basePackages = {"com.tencent.wxcloudrun.dao"})
 @EnableCaching
 public class WxCloudRunApplication {
 
