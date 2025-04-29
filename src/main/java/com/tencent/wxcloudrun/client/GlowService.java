@@ -12,6 +12,9 @@ import com.tencent.wxcloudrun.model.Glow;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author zhangyichuan
+ */
 @Slf4j
 @Service
 public class GlowService {
@@ -20,22 +23,22 @@ public class GlowService {
 
     private static final String IP_URL = "https://sunsetbot.top/";
 
-    private static final String[] events = { "rise_1", "set_1", "rise_2", "set_2" };
+    private static final String[] EVENTS = { "rise_1", "set_1", "rise_2", "set_2" };
 
     public String getAll(String address) {
         Glow[] glows = new Glow[4];
-        for (int i = 0; i < events.length; i++) {
-            glows[i] = get(address, events[i]);
+        for (int i = 0; i < EVENTS.length; i++) {
+            glows[i] = get(address, EVENTS[i]);
             log.info("glows[i]:{}", glows[i].toString());
         }
         if (!glows[0].ok()) {
             return "";
         }
-        String content = glows[0].getFormattedSummary() + "火烧云情况\n";
+        StringBuilder content = new StringBuilder(glows[0].getFormattedSummary() + "火烧云情况\n");
         for (Glow glow : glows) {
-            content += "\n" + glow.format() + "\n";
+            content.append("\n").append(glow.format()).append("\n");
         }
-        return content;
+        return content.toString();
     }
 
     public Glow get(String address, String event) {
@@ -43,6 +46,18 @@ public class GlowService {
                 IP_URL, address, event);
         log.info("glow url:{}", url);
         // 创建请求头
+        HttpEntity<String> entity = getStringHttpEntity();
+
+        // 使用exchange方法发送请求
+        ResponseEntity<Glow> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Glow.class);
+        return response.getBody();
+    }
+
+    private static HttpEntity<String> getStringHttpEntity() {
         HttpHeaders headers = new HttpHeaders();
         // 模拟Chrome浏览器
         headers.set("User-Agent",
@@ -53,14 +68,6 @@ public class GlowService {
         headers.set("Connection", "keep-alive");
 
         // 创建带请求头的请求实体
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        // 使用exchange方法发送请求
-        ResponseEntity<Glow> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                Glow.class);
-        return response.getBody();
+        return new HttpEntity<>(headers);
     }
 }

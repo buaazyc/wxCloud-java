@@ -1,11 +1,12 @@
 package com.tencent.wxcloudrun.config;
 
-import java.util.HashMap;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.HashMap;
 import lombok.Data;
 
+/**
+ * @author zhangyichuan
+ */
 @Data
 public final class ApiResponse {
 
@@ -15,12 +16,16 @@ public final class ApiResponse {
 
   @JsonProperty("ToUserName")
   private String toUserName;
+
   @JsonProperty("FromUserName")
   private String fromUserName;
+
   @JsonProperty("CreateTime")
   private Integer createTime;
+
   @JsonProperty("MsgType")
   private String msgType;
+
   @JsonProperty("Content")
   private String content;
 
@@ -30,11 +35,12 @@ public final class ApiResponse {
     this.data = data;
   }
 
-  public static ApiResponse wxMessage(String toUser, String fromUser, Integer ctime, String msgType, String content) {
+  public static ApiResponse wxMessage(
+      String toUser, String fromUser, Integer cTime, String msgType, String content) {
     ApiResponse response = new ApiResponse(200, "success", new HashMap<>());
     response.setToUserName(toUser);
     response.setFromUserName(fromUser);
-    response.setCreateTime(ctime);
+    response.setCreateTime(cTime);
     response.setMsgType(msgType);
     response.setContent(content);
     return response;
@@ -42,13 +48,5 @@ public final class ApiResponse {
 
   public static ApiResponse ok() {
     return new ApiResponse(200, "", new HashMap<>());
-  }
-
-  public static ApiResponse ok(Object data) {
-    return new ApiResponse(200, "", data);
-  }
-
-  public static ApiResponse error(String errorMsg) {
-    return new ApiResponse(0, errorMsg, new HashMap<>());
   }
 }

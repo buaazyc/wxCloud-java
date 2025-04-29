@@ -13,7 +13,7 @@ spring:
       prefix: /
   cache:
     jcache:
-      config: classpath:ehcache.xml
+      config: classpath:ecache.xml
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml

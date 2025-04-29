@@ -1,23 +1,21 @@
 package com.tencent.wxcloudrun.controller;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.tencent.wxcloudrun.client.GlowService;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dto.WxRequest;
 import com.tencent.wxcloudrun.model.Access;
-
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 微信消息处理控制器
+ * @author zhangyichuan
  */
 @RestController
 @RequiredArgsConstructor
