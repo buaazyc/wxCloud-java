@@ -1,5 +1,7 @@
 package com.tencent.wxcloudrun.client;
 
+import com.tencent.wxcloudrun.model.Glow;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -7,10 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.tencent.wxcloudrun.model.Glow;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhangyichuan
@@ -29,7 +27,7 @@ public class GlowService {
         Glow[] glows = new Glow[4];
         for (int i = 0; i < EVENTS.length; i++) {
             glows[i] = get(address, EVENTS[i]);
-            log.info("glows[i]:{}", glows[i].toString());
+            log.info("glows[i]:{}, num={}, str={}", glows[i].toString(), glows[i].getNumQuality(), glows[i].getStrQuality());
         }
         if (!glows[0].ok()) {
             return "";
