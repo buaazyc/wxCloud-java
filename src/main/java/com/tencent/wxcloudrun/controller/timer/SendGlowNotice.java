@@ -41,10 +41,10 @@ public class SendGlowNotice {
       // 先插入sql表，标识已经发送，如果插入失败，则表明已经发送过，不再重复发送
       NotifyHistory notifyHistory =
           new NotifyHistory(now.format(dateFormatter), access.getFromUserName(), access.getReq());
-      if (!notifyHistoryMapper.insertNotifyHistory(notifyHistory)) {
-        log.info("sendGlowNotice already sent {}", notifyHistory);
-        continue;
-      }
+      //      if (!notifyHistoryMapper.insertNotifyHistory(notifyHistory)) {
+      //        log.info("sendGlowNotice already sent {}", notifyHistory);
+      //        continue;
+      //      }
 
       // 查询火烧云情况
       String glowRes = glowService.queryGlowStrRes(access.getReq(), true);

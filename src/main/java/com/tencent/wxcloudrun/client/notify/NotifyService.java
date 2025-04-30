@@ -27,6 +27,10 @@ public class NotifyService {
     HttpEntity<String> entity = new HttpEntity<>(reqBody, new HttpHeaders());
     ResponseEntity<NotifyServiceRsp> response =
         restTemplate.exchange(URL, HttpMethod.POST, entity, NotifyServiceRsp.class);
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      log.error("notifyServiceRsp is not ok {}", response.getStatusCode());
+      return;
+    }
     NotifyServiceRsp body = response.getBody();
     if (body == null) {
       log.error("notifyServiceRsp is null");
