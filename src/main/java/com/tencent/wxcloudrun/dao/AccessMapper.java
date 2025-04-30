@@ -1,8 +1,7 @@
 package com.tencent.wxcloudrun.dao;
 
+import com.tencent.wxcloudrun.entity.Access;
 import org.apache.ibatis.annotations.Mapper;
-
-import com.tencent.wxcloudrun.model.Access;
 
 /**
  * @author zhangyichuan

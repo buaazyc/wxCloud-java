@@ -1,7 +1,7 @@
 package com.tencent.wxcloudrun.client.GlowService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tencent.wxcloudrun.model.Glow;
+import com.tencent.wxcloudrun.entity.Glow;
 import lombok.Data;
 
 /**

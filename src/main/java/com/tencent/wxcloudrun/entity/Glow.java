@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.model;
+package com.tencent.wxcloudrun.entity;
 
 import java.io.Serializable;
 import lombok.Data;

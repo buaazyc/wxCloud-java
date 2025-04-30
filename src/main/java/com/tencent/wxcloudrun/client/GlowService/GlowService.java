@@ -1,6 +1,6 @@
 package com.tencent.wxcloudrun.client.GlowService;
 
-import com.tencent.wxcloudrun.model.Glow;
+import com.tencent.wxcloudrun.entity.Glow;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

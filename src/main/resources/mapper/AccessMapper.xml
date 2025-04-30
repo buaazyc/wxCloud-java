@@ -3,20 +3,21 @@
 <mapper namespace="com.tencent.wxcloudrun.dao.AccessMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="AccessMapper" type="com.tencent.wxcloudrun.model.Access">
-        <id property="msgId" column="msg_id" />
-        <result property="msgType" column="msg_type" />
-        <result property="fromUserName" column="from_user_name" />
-        <result property="toUserName" column="to_user_name" />
-        <result property="createTime" column="create_time" />
-        <result property="header" column="header" />
-        <result property="req" column="req" />
-        <result property="rsp" column="rsp" />
+    <resultMap id="AccessMapper" type="com.tencent.wxcloudrun.entity.Access">
+        <id property="msgId" column="msg_id"/>
+        <result property="msgType" column="msg_type"/>
+        <result property="fromUserName" column="from_user_name"/>
+        <result property="toUserName" column="to_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="header" column="header"/>
+        <result property="req" column="req"/>
+        <result property="rsp" column="rsp"/>
     </resultMap>
 
     <!-- 插入访问记录 -->
-    <insert id="insertAccess" parameterType="com.tencent.wxcloudrun.model.Access"> INSERT INTO
+    <insert id="insertAccess" parameterType="com.tencent.wxcloudrun.entity.Access">INSERT INTO
         t_access_record ( msg_id, msg_type, from_user_name, to_user_name, create_time, header, req,
         rsp ) VALUES ( #{msgId}, #{msgType}, #{fromUserName}, #{toUserName}, #{createTime},
-        #{header}, #{req}, #{rsp} ) </insert>
+        #{header}, #{req}, #{rsp} )
+    </insert>
 </mapper>

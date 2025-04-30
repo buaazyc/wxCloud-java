@@ -2,9 +2,8 @@ package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.client.GlowService.GlowService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.dao.GlowHistoryMapper;
-import com.tencent.wxcloudrun.model.Access;
-import com.tencent.wxcloudrun.model.Glow;
+import com.tencent.wxcloudrun.entity.Access;
+import com.tencent.wxcloudrun.entity.Glow;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
 
   private final AccessMapper accessMapper;
-  private final GlowHistoryMapper glowHistoryMapper;
   private final GlowService glowService;
 
   /**
@@ -38,15 +36,16 @@ public class IndexController {
    */
   @PostMapping("/index")
   public WxResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
+    WxResponse rsp = new WxResponse();
     if (req == null || req.getContent() == null) {
-      return WxResponse.ok();
+      return rsp;
     }
     log.info("headers={} req={}", headers, req);
 
     // 根据经纬度获取天气信息
     ArrayList<Glow> glowRes = glowService.queryGlowRes(req.getContent());
     if (!glowRes.get(0).ok()) {
-      return WxResponse.ok();
+      return rsp;
     }
 
     // 组装结果
@@ -56,13 +55,10 @@ public class IndexController {
     }
 
     // 构造返回rsp
-    WxResponse rsp =
-        WxResponse.wxMessage(
-            req.getFromUserName(),
-            req.getToUserName(),
-            req.getCreateTime(),
-            "text",
-            content.toString());
+    rsp.setToUserName(req.getFromUserName());
+    rsp.setFromUserName(req.getToUserName());
+    rsp.setCreateTime(req.getCreateTime());
+    rsp.setContent(content.toString());
     log.info("rsp={}", rsp);
 
     // 记录访问日志
