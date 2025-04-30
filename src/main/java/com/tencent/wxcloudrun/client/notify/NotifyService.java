@@ -22,19 +22,16 @@ public class NotifyService {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<NotifyServiceReq> entity = new HttpEntity<>(req, headers);
-    ResponseEntity<NotifyServiceRsp> response =
-        restTemplate.postForEntity(URL, entity, NotifyServiceRsp.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(URL, entity, String.class);
     if (!response.getStatusCode().is2xxSuccessful()) {
       log.error("notifyServiceRsp is not ok {}", response.getStatusCode());
       return;
     }
-    NotifyServiceRsp body = response.getBody();
+    String body = response.getBody();
     if (body == null) {
       log.error("notifyServiceRsp is null");
       return;
     }
-    if (!body.ok()) {
-      log.error("notifyServiceRsp is not ok {}", body);
-    }
+    log.info("notifyServiceRsp is {}", body);
   }
 }
