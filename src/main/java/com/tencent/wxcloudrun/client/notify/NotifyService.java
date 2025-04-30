@@ -2,6 +2,7 @@ package com.tencent.wxcloudrun.client.notify;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,7 @@ public class NotifyService {
 
   private static final String URL = "http://api.weixin.qq.com/cgi-bin/message/custom/send";
 
-  public void sendNotify(String user, String content) {
+  public void sendNotify(String user, String content) throws JSONException {
     NotifyServiceReq req = new NotifyServiceReq(user, content);
     String reqBody = req.genReq().toString();
     log.info("reqBody {}", reqBody);

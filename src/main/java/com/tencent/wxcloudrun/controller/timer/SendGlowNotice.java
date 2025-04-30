@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -31,7 +32,7 @@ public class SendGlowNotice {
 
   /** 每1分钟执行一次 */
   @Scheduled(fixedRate = 60 * 1000)
-  public void sendGlowNotice() {
+  public void sendGlowNotice() throws JSONException {
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter stdFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");

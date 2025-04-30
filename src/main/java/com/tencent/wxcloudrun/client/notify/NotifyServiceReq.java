@@ -1,7 +1,7 @@
 package com.tencent.wxcloudrun.client.notify;
 
 import lombok.Data;
-import lombok.SneakyThrows;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 /**
@@ -18,8 +18,7 @@ public class NotifyServiceReq {
     this.content = content;
   }
 
-  @SneakyThrows
-  public JSONObject genReq() {
+  public JSONObject genReq() throws JSONException {
     JSONObject jsonObject = new JSONObject();
     jsonObject.put("touser", user);
     jsonObject.put("msgtype", "text");
