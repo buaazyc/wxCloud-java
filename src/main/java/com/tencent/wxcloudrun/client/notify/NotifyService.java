@@ -3,10 +3,7 @@ package com.tencent.wxcloudrun.client.notify;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +22,9 @@ public class NotifyService {
     NotifyServiceReq req = new NotifyServiceReq(user, content);
     Map<String, Object> reqBody = req.genReq();
     log.info("reqBody {}", reqBody);
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, new HttpHeaders());
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, headers);
     ResponseEntity<NotifyServiceRsp> response =
         restTemplate.exchange(URL, HttpMethod.POST, entity, NotifyServiceRsp.class);
     if (!response.getStatusCode().is2xxSuccessful()) {
