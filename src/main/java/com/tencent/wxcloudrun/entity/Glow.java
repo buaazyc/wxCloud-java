@@ -28,7 +28,11 @@ public class Glow implements Serializable {
     return "ok".equals(status);
   }
 
-  public String format() {
+  public boolean isBeautiful() {
+    return getNumQuality() >= 0.2;
+  }
+
+  public String strFormat() {
     return getFormattedEventTime() + "\n质量：" + getFormattedQuality();
   }
 
@@ -37,12 +41,11 @@ public class Glow implements Serializable {
   }
 
   public String getFormattedQuality() {
-    return getNumQuality() + getStrQuality();
+    return String.format("%.2f", getNumQuality()) + getStrQuality();
   }
 
-  public String getNumQuality() {
-    Double doubleNum = Double.parseDouble(quality.substring(0, quality.indexOf("<br>")));
-    return String.format("%.2f", doubleNum);
+  public Double getNumQuality() {
+    return Double.parseDouble(quality.substring(0, quality.indexOf("<br>")));
   }
 
   public String getStrQuality() {

@@ -20,4 +20,18 @@
         rsp ) VALUES ( #{msgId}, #{msgType}, #{fromUserName}, #{toUserName}, #{createTime},
         #{header}, #{req}, #{rsp} )
     </insert>
+
+    <!-- 获取最近一段时间内所有用户的最近一次访问记录 -->
+    <select id="getLastAccesses" resultMap="AccessMapper">
+        SELECT msg_id, msg_type, from_user_name, to_user_name, create_time, header, req, rsp
+        FROM t_access_record t
+        INNER JOIN (
+        SELECT from_user_name as user_name, MAX(create_time) AS max_time
+        FROM t_access_record
+        WHERE create_time > UNIX_TIMESTAMP(now()) - 2851200
+        GROUP BY from_user_name
+        ) AS sub
+        ON t.from_user_name = sub.user_name
+        AND t.create_time = sub.max_time;
+    </select>
 </mapper>

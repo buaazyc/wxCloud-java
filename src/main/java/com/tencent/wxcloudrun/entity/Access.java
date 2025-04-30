@@ -38,6 +38,26 @@ public class Access implements Serializable {
   /** 响应内容 */
   private String rsp;
 
+  // 全参数构造函数
+  public Access(
+      String msgId,
+      String msgType,
+      String fromUserName,
+      String toUserName,
+      Integer createTime,
+      String header,
+      String req,
+      String rsp) {
+    this.msgId = msgId;
+    this.msgType = msgType;
+    this.fromUserName = fromUserName;
+    this.toUserName = toUserName;
+    this.createTime = createTime;
+    this.header = header;
+    this.req = req;
+    this.rsp = rsp;
+  }
+
   public Access(Map<String, String> headers, WxRequest req, WxResponse rsp) {
     this.msgId = req.getMsgId();
     this.msgType = req.getMsgType();

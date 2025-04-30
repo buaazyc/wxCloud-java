@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.client.GlowService;
+package com.tencent.wxcloudrun.client.glow;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class GlowServiceReq {
-  private static final String IP_URL = "https://sunsetbot.top/";
+  private static final String URL = "https://sunsetbot.top/";
   private final String address;
   private final String event;
 
@@ -19,6 +19,6 @@ public class GlowServiceReq {
 
   public String genUrl() {
     return String.format(
-        "%s?intend=select_city&query_city=%s&event_date=None&event=%s", IP_URL, address, event);
+        "%s?intend=select_city&query_city=%s&event_date=None&event=%s", URL, address, event);
   }
 }

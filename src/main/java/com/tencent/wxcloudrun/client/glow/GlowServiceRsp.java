@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.client.GlowService;
+package com.tencent.wxcloudrun.client.glow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tencent.wxcloudrun.entity.Glow;

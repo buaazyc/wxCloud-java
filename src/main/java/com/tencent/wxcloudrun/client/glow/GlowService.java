@@ -1,7 +1,12 @@
-package com.tencent.wxcloudrun.client.GlowService;
+package com.tencent.wxcloudrun.client.glow;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.entity.Glow;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -21,6 +26,49 @@ public class GlowService {
 
   private static final String[] EVENTS = {"rise_1", "set_1", "rise_2", "set_2"};
 
+  /** 缓存10min */
+  private final Cache<String, ArrayList<Glow>> cache =
+      Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+
+  public String queryGlowStrRes(String address, boolean filter) {
+    ArrayList<Glow> glowRes = queryGlowResWithCache(address);
+    ArrayList<Glow> glowResFiltered = new ArrayList<>();
+    // 过滤掉不美的和过去的
+    if (filter) {
+      LocalDateTime now = LocalDateTime.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      for (Glow glow : glowRes) {
+        LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
+        if (now.isBefore(parsedTime) && glow.isBeautiful()) {
+          glowResFiltered.add(glow);
+        }
+      }
+    } else {
+      glowResFiltered = glowRes;
+    }
+    if (glowResFiltered.isEmpty()) {
+      return "";
+    }
+    StringBuilder content =
+        new StringBuilder(glowResFiltered.get(0).getFormattedSummary() + "火烧云情况\n");
+    for (Glow glow : glowResFiltered) {
+      content.append("\n").append(glow.strFormat());
+    }
+    return content.toString();
+  }
+
+  public ArrayList<Glow> queryGlowResWithCache(String address) {
+    ArrayList<Glow> cacheGlows = cache.getIfPresent(address);
+    if (cacheGlows != null) {
+      log.info("cache hit, address = {}", address);
+      return cacheGlows;
+    }
+    log.info("cache miss, address = {}", address);
+    ArrayList<Glow> glows = queryGlowRes(address);
+    cache.put(address, glows);
+    return glows;
+  }
+
   public ArrayList<Glow> queryGlowRes(String address) {
     ArrayList<Glow> glowArrayList = new ArrayList<>();
     for (String event : EVENTS) {
@@ -34,6 +82,10 @@ public class GlowService {
         return new ArrayList<>();
       }
       Glow glowRsp = glowServiceRspBody.toGlow();
+      if (!glowRsp.ok()) {
+        log.error("glow query error, address = {}, event = {}, rsp = {}", address, event, glowRsp);
+        continue;
+      }
       glowArrayList.add(glowRsp);
       log.info("glow: {}", glowRsp);
     }
