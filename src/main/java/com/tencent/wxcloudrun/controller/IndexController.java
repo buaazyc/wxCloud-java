@@ -42,7 +42,7 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
-    if ("oBY566s96Ou1Yn16HdbxCfh_wW5c".equals(req.getToUserName())
+    if ("oBY566s96Ou1Yn16HdbxCfh_wW5c".equals(req.getFromUserName())
         && "test".equals(req.getContent())) {
       notifyService.sendNotify(req.getFromUserName(), "test");
       return rsp;
