@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.controller;
+package com.tencent.wxcloudrun.controller.web;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.notify.NotifyService;

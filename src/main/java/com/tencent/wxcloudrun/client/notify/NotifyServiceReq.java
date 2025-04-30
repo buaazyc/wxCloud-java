@@ -1,7 +1,7 @@
 package com.tencent.wxcloudrun.client.notify;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -10,21 +10,22 @@ import lombok.Data;
  */
 @Data
 public class NotifyServiceReq {
+  @JsonProperty("touser")
   private String user;
-  private String content;
+  @JsonProperty("msgtype")
+  private String msgtype;
+  @JsonProperty("text")
+  private Text text;
+  @Data
+  public static class Text {
+    @JsonProperty("content")
+    private String content;
+  }
 
   public NotifyServiceReq(String user, String content) {
     this.user = user;
-    this.content = content;
-  }
-
-  public Map<String, Object> genReq() {
-    Map<String, Object> body = new HashMap<>(5);
-    body.put("touser", user);
-    body.put("msgtype", "text");
-    Map<String, Object> text = new HashMap<>(5);
-    text.put("content", content);
-    body.put("text", text);
-    return body;
+    this.msgtype = "text";
+    this.text = new Text();
+    this.text.setContent(content);
   }
 }

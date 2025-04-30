@@ -1,6 +1,5 @@
 package com.tencent.wxcloudrun.client.notify;
 
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -20,20 +19,11 @@ public class NotifyService {
 
   public void sendNotify(String user, String content) {
     NotifyServiceReq req = new NotifyServiceReq(user, content);
-    Map<String, Object> reqBody = req.genReq();
-    log.info("reqBody {}", reqBody);
     HttpHeaders headers = new HttpHeaders();
-    headers.set(
-        "User-Agent",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
-    headers.set("Accept", "application/json");
-    headers.set("Accept-Language", "zh-CN,zh;q=0.9");
-    headers.set("Accept-Encoding", "gzip, deflate, br");
-    headers.set("Connection", "keep-alive");
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, headers);
+    HttpEntity<NotifyServiceReq> entity = new HttpEntity<>(req, headers);
     ResponseEntity<NotifyServiceRsp> response =
-        restTemplate.exchange(URL, HttpMethod.POST, entity, NotifyServiceRsp.class);
+        restTemplate.postForEntity(URL, entity, NotifyServiceRsp.class);
     if (!response.getStatusCode().is2xxSuccessful()) {
       log.error("notifyServiceRsp is not ok {}", response.getStatusCode());
       return;
