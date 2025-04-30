@@ -1,11 +1,12 @@
 package com.tencent.wxcloudrun.controller;
 
-import com.tencent.wxcloudrun.client.GlowService;
-import com.tencent.wxcloudrun.config.ApiResponse;
+import com.tencent.wxcloudrun.client.GlowService.GlowService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dao.GlowHistoryMapper;
-import com.tencent.wxcloudrun.dto.WxRequest;
-import com.tencent.wxcloudrun.model.GlowHistory;
+import com.tencent.wxcloudrun.model.Glow;
+import com.tencent.wxcloudrun.provider.WxRequest;
+import com.tencent.wxcloudrun.provider.WxResponse;
+import java.util.ArrayList;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,22 +36,33 @@ public class IndexController {
    * @return 响应消息
    */
   @PostMapping("/index")
-  public ApiResponse create(
+  public WxResponse create(
       @RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
     if (req == null || req.getContent() == null) {
-      return ApiResponse.ok();
+      return WxResponse.ok();
     }
-
-    log.info("收到消息： {} {}", headers, req);
+    log.info("headers={} req={}", headers, req);
 
     // 根据经纬度获取天气信息
-    String glowRes = glowService.getAll(req.getContent());
+    ArrayList<Glow> glowRes = glowService.queryGlowRes(req.getContent());
+    if (!glowRes.get(0).ok()) {
+      return WxResponse.ok();
+    }
 
-    ApiResponse rsp =
-        ApiResponse.wxMessage(
-            req.getFromUserName(), req.getToUserName(), req.getCreateTime(), "text", glowRes);
+    // 组装结果
+    StringBuilder content = new StringBuilder(glowRes.get(0).getFormattedSummary() + "火烧云情况\n");
+    for (Glow glow : glowRes) {
+      content.append("\n").append(glow.format());
+    }
 
-    log.info("回复消息： {}", rsp);
+    WxResponse rsp =
+        WxResponse.wxMessage(
+            req.getFromUserName(),
+            req.getToUserName(),
+            req.getCreateTime(),
+            "text",
+            content.toString());
+    log.info("rsp={}", rsp);
 
     // 记录访问日志
     //    accessMapper.insertAccess(new Access(headers, req, rsp));

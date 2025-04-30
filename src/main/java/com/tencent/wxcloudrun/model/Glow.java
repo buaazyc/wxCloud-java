@@ -1,6 +1,5 @@
 package com.tencent.wxcloudrun.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -13,64 +12,36 @@ import lombok.Data;
  */
 @Data
 public class Glow implements Serializable {
-  @JsonProperty("img_summary")
   private String summary;
 
-  @JsonProperty("place_holder")
   private String placeHolder;
 
-  @JsonProperty("tb_aod")
   private String aod;
 
-  @JsonProperty("tb_event_time")
   private String eventTime;
 
-  @JsonProperty("tb_quality")
   private String quality;
 
-  @JsonProperty("status")
   private String status;
 
   public boolean ok() {
     return "ok".equals(status);
   }
 
-  /**
-   * 获取格式化后的事件
-   *
-   * @return 格式化后的事件
-   */
+  public String format() {
+    return getFormattedEventTime() + "\n质量：" + getFormattedQuality();
+  }
+
   public String getFormattedEventTime() {
     return eventTime.replace("<br>", " ");
   }
 
-  /**
-   * 获取格式化后的质量
-   *
-   * @return 格式化后的质量
-   */
   public String getFormattedQuality() {
     return getNumQuality() + getStrQuality();
   }
 
-  /**
-   * 获取格式化后的摘要
-   *
-   * @return 格式化后的摘要
-   */
-  public String getFormattedSummary() {
-    String cleanText = summary.replace("&ensp;", "").replace("<b>", "").replace("</b>", "");
-    // 按】分割并获取第一部分,加上】
-    return cleanText.split("】")[0] + "】";
-  }
-
-  /**
-   * 获取数字样式的质量
-   *
-   * @return 格式化后的质量
-   */
   public String getNumQuality() {
-    Double doubleNum = Double.parseDouble(quality.substring(0, quality.indexOf("<br>"))) * 100;
+    Double doubleNum = Double.parseDouble(quality.substring(0, quality.indexOf("<br>")));
     return String.format("%.2f", doubleNum);
   }
 
@@ -78,7 +49,9 @@ public class Glow implements Serializable {
     return quality.split("<br>")[1];
   }
 
-  public String format() {
-    return getFormattedEventTime() + "\n质量：" + getFormattedQuality();
+  public String getFormattedSummary() {
+    String cleanText = summary.replace("&ensp;", "").replace("<b>", "").replace("</b>", "");
+    // 按】分割并获取第一部分,加上】
+    return cleanText.split("】")[0] + "】";
   }
 }
