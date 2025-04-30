@@ -42,12 +42,6 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
-    if ("oBY566s96Ou1Yn16HdbxCfh_wW5c".equals(req.getFromUserName())
-        && "test".equals(req.getContent())) {
-      notifyService.sendNotify(req.getFromUserName(), "test");
-      return rsp;
-    }
-
     // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());

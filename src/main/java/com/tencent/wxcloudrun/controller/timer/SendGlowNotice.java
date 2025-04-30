@@ -32,6 +32,10 @@ public class SendGlowNotice {
   /** 每1分钟执行一次 */
   @Scheduled(fixedRate = 60 * 1000)
   public void sendGlowNotice() {
+    // 暂时屏蔽该功能
+    if (true) {
+      return;
+    }
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter stdFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -54,7 +58,7 @@ public class SendGlowNotice {
 
       // 调用发送接口发送给用户
       log.info("sendGlowNotice user={} glowRes={}", notifyHistory.getUser(), glowRes);
-      //      notifyService.sendNotify(notifyHistory.getUser(), glowRes);
+      notifyService.sendNotify(notifyHistory.getUser(), glowRes);
     }
   }
 }
