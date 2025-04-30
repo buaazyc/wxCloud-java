@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -32,7 +31,7 @@ public class SendGlowNotice {
 
   /** 每1分钟执行一次 */
   @Scheduled(fixedRate = 60 * 1000)
-  public void sendGlowNotice() throws JSONException {
+  public void sendGlowNotice() {
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter stdFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -42,10 +41,10 @@ public class SendGlowNotice {
       // 先插入sql表，标识已经发送，如果插入失败，则表明已经发送过，不再重复发送
       NotifyHistory notifyHistory =
           new NotifyHistory(now.format(dateFormatter), access.getFromUserName(), access.getReq());
-      //      if (!notifyHistoryMapper.insertNotifyHistory(notifyHistory)) {
-      //        log.info("sendGlowNotice already sent {}", notifyHistory);
-      //        continue;
-      //      }
+      if (!notifyHistoryMapper.insertNotifyHistory(notifyHistory)) {
+        log.info("sendGlowNotice already sent {}", notifyHistory);
+        continue;
+      }
 
       // 查询火烧云情况
       String glowRes = glowService.queryGlowStrRes(access.getReq(), true);
@@ -55,7 +54,7 @@ public class SendGlowNotice {
 
       // 调用发送接口发送给用户
       log.info("sendGlowNotice user={} glowRes={}", notifyHistory.getUser(), glowRes);
-      notifyService.sendNotify(notifyHistory.getUser(), glowRes);
+      //      notifyService.sendNotify(notifyHistory.getUser(), glowRes);
     }
   }
 }

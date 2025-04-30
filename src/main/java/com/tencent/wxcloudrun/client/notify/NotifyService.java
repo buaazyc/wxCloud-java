@@ -1,8 +1,8 @@
 package com.tencent.wxcloudrun.client.notify;
 
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,11 +21,11 @@ public class NotifyService {
 
   private static final String URL = "http://api.weixin.qq.com/cgi-bin/message/custom/send";
 
-  public void sendNotify(String user, String content) throws JSONException {
+  public void sendNotify(String user, String content) {
     NotifyServiceReq req = new NotifyServiceReq(user, content);
-    String reqBody = req.genReq().toString();
+    Map<String, Object> reqBody = req.genReq();
     log.info("reqBody {}", reqBody);
-    HttpEntity<String> entity = new HttpEntity<>(reqBody, new HttpHeaders());
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, new HttpHeaders());
     ResponseEntity<NotifyServiceRsp> response =
         restTemplate.exchange(URL, HttpMethod.POST, entity, NotifyServiceRsp.class);
     if (!response.getStatusCode().is2xxSuccessful()) {

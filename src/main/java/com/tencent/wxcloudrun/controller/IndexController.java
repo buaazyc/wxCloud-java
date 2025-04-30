@@ -1,7 +1,9 @@
 package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
+import com.tencent.wxcloudrun.client.notify.NotifyService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
+import com.tencent.wxcloudrun.entity.Access;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class IndexController {
 
   private final AccessMapper accessMapper;
   private final GlowService glowService;
+  private final NotifyService notifyService;
 
   /**
    * 处理微信消息请求
@@ -39,6 +42,12 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
+    if ("oBY566s96Ou1Yn16HdbxCfh_wW5c".equals(req.getToUserName())
+        && "test".equals(req.getContent())) {
+      notifyService.sendNotify(req.getFromUserName(), "test");
+      return rsp;
+    }
+
     // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
@@ -47,7 +56,7 @@ public class IndexController {
     log.info("rsp={}", rsp);
 
     // 记录访问日志
-    //    accessMapper.insertAccess(new Access(headers, req, rsp));
+    accessMapper.insertAccess(new Access(headers, req, rsp));
     return rsp;
   }
 }

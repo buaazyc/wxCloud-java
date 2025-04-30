@@ -1,8 +1,8 @@
 package com.tencent.wxcloudrun.client.notify;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 /**
  * @author zhangyichuan
@@ -18,13 +18,13 @@ public class NotifyServiceReq {
     this.content = content;
   }
 
-  public JSONObject genReq() throws JSONException {
-    JSONObject jsonObject = new JSONObject();
-    jsonObject.put("touser", user);
-    jsonObject.put("msgtype", "text");
-    JSONObject text = new JSONObject();
+  public Map<String, Object> genReq() {
+    Map<String, Object> body = new HashMap<>(5);
+    body.put("touser", user);
+    body.put("msgtype", "text");
+    Map<String, Object> text = new HashMap<>(5);
     text.put("content", content);
-    jsonObject.put("text", text);
-    return jsonObject;
+    body.put("text", text);
+    return body;
   }
 }
