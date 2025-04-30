@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.controller;
 import com.tencent.wxcloudrun.client.GlowService.GlowService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dao.GlowHistoryMapper;
+import com.tencent.wxcloudrun.model.Access;
 import com.tencent.wxcloudrun.model.Glow;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
@@ -36,8 +37,7 @@ public class IndexController {
    * @return 响应消息
    */
   @PostMapping("/index")
-  public WxResponse create(
-      @RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
+  public WxResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
     if (req == null || req.getContent() == null) {
       return WxResponse.ok();
     }
@@ -55,6 +55,7 @@ public class IndexController {
       content.append("\n").append(glow.format());
     }
 
+    // 构造返回rsp
     WxResponse rsp =
         WxResponse.wxMessage(
             req.getFromUserName(),
@@ -65,7 +66,7 @@ public class IndexController {
     log.info("rsp={}", rsp);
 
     // 记录访问日志
-    //    accessMapper.insertAccess(new Access(headers, req, rsp));
+    accessMapper.insertAccess(new Access(headers, req, rsp));
     return rsp;
   }
 }
