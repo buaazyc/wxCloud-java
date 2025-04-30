@@ -23,6 +23,13 @@ public class NotifyService {
     Map<String, Object> reqBody = req.genReq();
     log.info("reqBody {}", reqBody);
     HttpHeaders headers = new HttpHeaders();
+    headers.set(
+        "User-Agent",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
+    headers.set("Accept", "application/json");
+    headers.set("Accept-Language", "zh-CN,zh;q=0.9");
+    headers.set("Accept-Encoding", "gzip, deflate, br");
+    headers.set("Connection", "keep-alive");
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, headers);
     ResponseEntity<NotifyServiceRsp> response =
