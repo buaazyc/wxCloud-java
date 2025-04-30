@@ -1,4 +1,0 @@
-<ehcache>
-    <diskStore path="/tmp/cache" />
-    <cache name="glow" maxElementsInMemory="10000" timeToLiveSeconds="300" />
-</ehcache>

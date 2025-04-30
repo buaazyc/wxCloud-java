@@ -11,9 +11,6 @@ spring:
     view:
       suffix: .html
       prefix: /
-  cache:
-    jcache:
-      config: classpath:ecache.xml
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml
