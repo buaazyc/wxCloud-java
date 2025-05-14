@@ -28,7 +28,7 @@ public class Glow implements Serializable {
     return "ok".equals(status);
   }
 
-  public boolean isDataReady() {
+  public boolean isNotReady() {
     return "-".equals(quality);
   }
 
