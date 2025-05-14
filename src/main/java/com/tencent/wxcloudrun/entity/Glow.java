@@ -28,6 +28,10 @@ public class Glow implements Serializable {
     return "ok".equals(status);
   }
 
+  public boolean isDataReady() {
+    return "-".equals(quality);
+  }
+
   public boolean isBeautiful() {
     return getNumQuality() >= 0.2;
   }

@@ -86,6 +86,11 @@ public class GlowService {
         log.error("glow query error, address = {}, event = {}, rsp = {}", address, event, glowRsp);
         continue;
       }
+      if (!glowRsp.isDataReady()) {
+        log.info(
+            "glow query not ready, address = {}, event = {}, rsp = {}", address, event, glowRsp);
+        continue;
+      }
       glowArrayList.add(glowRsp);
       log.info("glow: {}", glowRsp);
     }
