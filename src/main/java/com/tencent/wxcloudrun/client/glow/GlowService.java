@@ -30,46 +30,50 @@ public class GlowService {
   private final Cache<String, ArrayList<Glow>> cache =
       Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
 
-  public String queryGlowStrRes(String address, boolean filter) {
-    ArrayList<Glow> glowRes = queryGlowResWithCache(address);
-    ArrayList<Glow> glowResFiltered = new ArrayList<>();
-    // 过滤掉不美的和过去的
-    if (filter) {
-      LocalDateTime now = LocalDateTime.now();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      for (Glow glow : glowRes) {
-        LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
-        if (now.isBefore(parsedTime) && glow.isBeautiful()) {
-          glowResFiltered.add(glow);
-        }
-      }
-    } else {
-      glowResFiltered = glowRes;
-    }
-    if (glowResFiltered.isEmpty()) {
+
+  public String formatGlowStrRes(ArrayList<Glow> glows) {
+    if (glows.isEmpty()) {
       return "";
     }
     StringBuilder content =
-        new StringBuilder(glowResFiltered.get(0).getFormattedSummary() + "火烧云情况\n");
-    for (Glow glow : glowResFiltered) {
+            new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云情况\n");
+    for (Glow glow : glows) {
       content.append("\n").append(glow.strFormat());
     }
     return content.toString();
   }
 
-  public ArrayList<Glow> queryGlowResWithCache(String address) {
+  public ArrayList<Glow> queryGlowWithFilter(String address, boolean filter) {
+    ArrayList<Glow> glowRes = queryGlowResWithCache(address);
+    if (!filter) {
+      return glowRes;
+    }
+    // 过滤掉不美的和过去的
+    ArrayList<Glow> glowResFiltered = new ArrayList<>();
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    for (Glow glow : glowRes) {
+      LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
+      if (now.isBefore(parsedTime) && glow.isBeautiful()) {
+        glowResFiltered.add(glow);
+      }
+    }
+    return glowResFiltered;
+  }
+
+  private ArrayList<Glow> queryGlowResWithCache(String address) {
     ArrayList<Glow> cacheGlows = cache.getIfPresent(address);
     if (cacheGlows != null) {
       log.info("cache hit, address = {}", address);
       return cacheGlows;
     }
     log.info("cache miss, address = {}", address);
-    ArrayList<Glow> glows = queryGlowRes(address);
+    ArrayList<Glow> glows = queryGlow(address);
     cache.put(address, glows);
     return glows;
   }
 
-  public ArrayList<Glow> queryGlowRes(String address) {
+  private ArrayList<Glow> queryGlow(String address) {
     ArrayList<Glow> glowArrayList = new ArrayList<>();
     for (String event : EVENTS) {
       String url = new GlowServiceReq(address, event).genUrl();

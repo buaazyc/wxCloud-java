@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.controller.timer;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
+import com.tencent.wxcloudrun.entity.Glow;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * @author zhangyichuan
@@ -37,7 +39,8 @@ public class StatCityGlow {
         log.error("sleep error", e);
       }
       // 增加过滤
-      String glowRes = glowService.queryGlowStrRes(city, true);
+      ArrayList<Glow> glows = glowService.queryGlowWithFilter(city ,true);
+      String glowRes = glowService.formatGlowStrRes(glows);
       if ("".equals(glowRes)) {
         continue;
       }

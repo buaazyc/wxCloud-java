@@ -1,11 +1,13 @@
 package com.tencent.wxcloudrun.controller.web;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
-import com.tencent.wxcloudrun.client.notify.NotifyService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.entity.Access;
+import com.tencent.wxcloudrun.entity.Glow;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
+
+import java.util.ArrayList;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,6 @@ public class IndexController {
 
   private final AccessMapper accessMapper;
   private final GlowService glowService;
-  private final NotifyService notifyService;
 
   /**
    * 处理微信消息请求
@@ -42,11 +43,13 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
+    ArrayList<Glow> glows = glowService.queryGlowWithFilter(req.getContent(), false);
+
     // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
-    rsp.setContent(glowService.queryGlowStrRes(req.getContent(), false));
+    rsp.setContent(glowService.formatGlowStrRes(glows));
     log.info("rsp={}", rsp);
 
     // 记录访问日志
