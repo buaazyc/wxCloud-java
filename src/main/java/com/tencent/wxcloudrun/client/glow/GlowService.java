@@ -38,7 +38,7 @@ public class GlowService {
     StringBuilder content =
             new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云情况\n");
     for (Glow glow : glows) {
-      content.append("\n").append(glow.strFormat());
+      content.append("\n").append(glow.detailStrFormat()).append("\n------------------------");
     }
     return content.toString();
   }
