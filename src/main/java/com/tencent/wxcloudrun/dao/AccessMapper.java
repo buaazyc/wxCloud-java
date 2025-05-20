@@ -22,4 +22,11 @@ public interface AccessMapper {
    * @return 访问记录列表
    */
   ArrayList<Access> getLastAccesses();
+
+  /**
+   * 获取所有用户的城市列表
+   *
+   * @return 访问记录列表
+   */
+  ArrayList<String> getCityList();
 }

@@ -34,4 +34,12 @@
         ON t.from_user_name = sub.user_name
         AND t.create_time = sub.max_time;
     </select>
+
+    <!-- 获取所有rsp不为空的req集合 -->
+    <select id="getCityList" resultType="String">
+        SELECT req
+        FROM t_access_record
+        WHERE length(rsp) > 0 AND create_time > UNIX_TIMESTAMP(now()) - 2851200
+        GROUP BY req;
+    </select>
 </mapper>

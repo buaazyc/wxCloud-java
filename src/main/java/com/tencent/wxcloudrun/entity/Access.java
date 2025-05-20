@@ -38,7 +38,7 @@ public class Access implements Serializable {
   /** 响应内容 */
   private String rsp;
 
-  // 全参数构造函数
+  /** 全参数构造函数 */
   public Access(
       String msgId,
       String msgType,
