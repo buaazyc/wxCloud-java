@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 /**
  * @author zhangyichuan
@@ -28,21 +27,25 @@ public class StatCityGlow {
   /** 每24小时执行一次 */
   @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
   public void stat() {
-    ArrayList<String> cityList = accessMapper.getCityList();
-    for (String city : cityList) {
+    StringBuilder subject = new StringBuilder();
+    for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
+      // 保护接口，先休眠0.1秒
       try {
-        Thread.sleep(1000);
+        Thread.sleep(100);
       } catch (InterruptedException e) {
         log.error("sleep error", e);
       }
+      // 增加过滤
       String glowRes = glowService.queryGlowStrRes(city, true);
       if ("".equals(glowRes)) {
         continue;
       }
+      // 满足过滤条件后，则为优质火烧云，发送邮件推送到管理员
       log.info("city is {}, glowRes is beautiful {}", city, glowRes);
-      emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", glowRes);
+      subject.append(glowRes).append("-----------------------------------------").append("\n");
     }
+    emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
     log.info("statCityGlow end, now is {}", LocalDateTime.now());
   }
 }
