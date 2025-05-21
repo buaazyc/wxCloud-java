@@ -22,7 +22,6 @@ public class EmailService {
     private final String PASSWORD = System.getenv("EMAIL_PASSWORD");
 
     public void sendEmail(String to, String subject, String content) {
-
         Properties props = new Properties();
         props.put("mail.smtp.host", SMTP_HOST);
         props.put("mail.smtp.auth", "true");

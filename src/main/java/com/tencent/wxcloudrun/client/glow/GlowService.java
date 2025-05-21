@@ -57,7 +57,6 @@ public class GlowService {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of(Constants.LOCAL_ZONE_ID));
     for (Glow glow : glowRes) {
       LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
-      log.info("now = {}, parsedTime = {}", now, parsedTime);
       if (now.isBefore(parsedTime) && glow.isBeautiful()) {
         glowResFiltered.add(glow);
       }

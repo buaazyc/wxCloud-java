@@ -1,7 +1,13 @@
 package com.tencent.wxcloudrun.controller.timer;
 
+import com.alibaba.dashscope.aigc.generation.GenerationResult;
+import com.alibaba.dashscope.exception.ApiException;
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
+import com.alibaba.dashscope.utils.JsonUtils;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
+import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.entity.Glow;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +29,12 @@ import java.util.ArrayList;
 @Slf4j
 public class StatCityGlow {
   private final AccessMapper accessMapper;
+
   private final GlowService glowService;
+
   private final EmailService emailService;
+
+  private final AliService aliService;
 
   /** 每8小时执行一次 */
   @Scheduled(fixedRate = 8 * 60 * 60 * 1000)
