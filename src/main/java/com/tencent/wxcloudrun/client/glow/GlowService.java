@@ -28,9 +28,9 @@ public class GlowService {
 
   private static final String[] EVENTS = {"rise_1", "set_1", "rise_2", "set_2"};
 
-  /** 缓存10min */
+  /** 缓存60min */
   private final Cache<String, ArrayList<Glow>> cache =
-      Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+      Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES).build();
 
 
   public String formatGlowStrRes(ArrayList<Glow> glows) {

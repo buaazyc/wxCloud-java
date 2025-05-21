@@ -32,7 +32,7 @@ public class StatCityGlow {
     StringBuilder subject = new StringBuilder();
     for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
-      // 保护接口，先休眠0.1秒
+      // 保护接口，每个城市查询后休眠0.1秒
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
