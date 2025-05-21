@@ -26,8 +26,8 @@ public class StatCityGlow {
   private final GlowService glowService;
   private final EmailService emailService;
 
-  /** 每24小时执行一次 */
-  @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+  /** 每8小时执行一次 */
+  @Scheduled(fixedRate = 8 * 60 * 60 * 1000)
   public void stat() {
     StringBuilder subject = new StringBuilder();
     for (String city : accessMapper.getCityList()) {
