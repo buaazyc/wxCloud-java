@@ -43,8 +43,8 @@ public class Glow implements Serializable {
   public String detailStrFormat() {
       return getEvent().getDesc()+ "\n"+
               getFormattedEventTime() +
-              "\n质量：" + String.format("%.2f", getNumQuality()) + getStrQuality() +
-              "\n污染：" + String.format("%.2f", getNumAod()) + getStrAod();
+              "\n质量：" + getStrQuality() +
+              "\n污染：" + getStrAod();
   }
 
   public String getFormattedEventTime() {
@@ -56,11 +56,12 @@ public class Glow implements Serializable {
   }
 
   public String getStrQuality() {
-    String base = quality.split("<br>")[1].replace("\n", "");
+    String num = String.format("%.2f", getNumQuality());
+    String str = quality.split("<br>")[1].replace("\n", "");
     if (isBeautiful()) {
-      return base+"!!!";
+      return "【" + num + "】" + str +"!!!";
     }
-    return base;
+    return num + str;
   }
   
   public Double getNumAod() {
@@ -68,7 +69,7 @@ public class Glow implements Serializable {
   }
   
   public String getStrAod() {
-    return aod.split("<br>")[1].replace("\n", "");
+    return String.format("%.2f", getNumAod()) + aod.split("<br>")[1].replace("\n", "");
   }
 
   public String getFormattedSummary() {

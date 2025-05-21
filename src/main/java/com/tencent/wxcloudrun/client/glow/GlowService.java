@@ -52,7 +52,7 @@ public class GlowService {
   }
 
   public String end(){
-    return "\n说明：质量越高越好，污染越低越好\n";
+    return "\n质量越高越好，污染越低越好\nBy Echuan";
   }
 
   public ArrayList<Glow> queryGlowWithFilter(String address, boolean filter) {
