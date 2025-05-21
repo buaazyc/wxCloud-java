@@ -49,7 +49,7 @@ public class IndexController {
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
-    rsp.setContent(glowService.formatGlowStrRes(glows));
+    rsp.setContent(glowService.formatGlowStrRes(glows)+glowService.end());
     log.info("rsp={}", rsp);
 
     // 记录访问日志

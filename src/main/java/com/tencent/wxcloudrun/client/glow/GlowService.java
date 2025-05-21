@@ -44,11 +44,15 @@ public class GlowService {
       return "";
     }
     StringBuilder content =
-            new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云情况\n");
+            new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云预测\n");
     for (Glow glow : glows) {
       content.append("\n").append(glow.detailStrFormat()).append("\n------------------------");
     }
     return content.toString();
+  }
+
+  public String end(){
+    return "\n说明：质量越高越好，污染越低越好\n";
   }
 
   public ArrayList<Glow> queryGlowWithFilter(String address, boolean filter) {
