@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.web;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
+import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.entity.Access;
 import com.tencent.wxcloudrun.entity.Glow;
@@ -9,6 +10,8 @@ import com.tencent.wxcloudrun.provider.WxResponse;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,10 +53,12 @@ public class IndexController {
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
     rsp.setContent(glowService.formatGlowStrRes(glows)+"\n"+glowService.end());
-    log.info("rsp={}", rsp);
+    log.info("rsp = {}", rsp);
 
     // 记录访问日志
-    accessMapper.insertAccess(new Access(headers, req, rsp));
+    if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
+      accessMapper.insertAccess(new Access(headers, req, rsp));
+    }
     return rsp;
   }
 }

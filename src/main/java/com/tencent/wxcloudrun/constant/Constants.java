@@ -6,4 +6,6 @@ package com.tencent.wxcloudrun.constant;
  */
 public class Constants {
     public static final String LOCAL_ZONE_ID = "Asia/Shanghai";
+
+    public static final String TEST_MSG_ID = "test";
 }
