@@ -1,10 +1,5 @@
 package com.tencent.wxcloudrun.controller.timer;
 
-import com.alibaba.dashscope.aigc.generation.GenerationResult;
-import com.alibaba.dashscope.exception.ApiException;
-import com.alibaba.dashscope.exception.InputRequiredException;
-import com.alibaba.dashscope.exception.NoApiKeyException;
-import com.alibaba.dashscope.utils.JsonUtils;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
@@ -16,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -36,9 +32,17 @@ public class StatCityGlow {
 
   private final AliService aliService;
 
-  /** 每8小时执行一次 */
-  @Scheduled(fixedRate = 8 * 60 * 60 * 1000)
-  public void stat() {
+  @PostConstruct
+  public void runOnceOnStartup() {
+    executeTask();
+  }
+
+  @Scheduled(cron = "0 30 12,19 * * *", zone = "Asia/Shanghai")
+  public void scheduledTask() {
+    executeTask();
+  }
+
+  public void executeTask() {
     StringBuilder subject = new StringBuilder();
     for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
@@ -59,6 +63,6 @@ public class StatCityGlow {
       subject.append(glowRes).append("-----------------------------------------").append("\n");
     }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
-    log.info("statCityGlow end, now is {}", LocalDateTime.now());
+    log.info("statCityGlow end, now is {}, stat res = {}", LocalDateTime.now(), subject);
   }
 }
