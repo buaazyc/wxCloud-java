@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.client.glow;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.constant.Constants;
+import com.tencent.wxcloudrun.constant.EventEnum;
 import com.tencent.wxcloudrun.entity.Glow;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,7 +27,12 @@ import org.springframework.web.client.RestTemplate;
 public class GlowService {
   @Autowired private RestTemplate restTemplate;
 
-  private static final String[] EVENTS = {"rise_1", "set_1", "rise_2", "set_2"};
+  private static final EventEnum[] EVENTS = {
+    EventEnum.RISE_1,
+    EventEnum.SUNSET_1,
+    EventEnum.RISE_2,
+    EventEnum.SUNSET_2
+  };
 
   /** 缓存60min */
   private final Cache<String, ArrayList<Glow>> cache =
@@ -78,8 +84,8 @@ public class GlowService {
 
   private ArrayList<Glow> queryGlow(String address) {
     ArrayList<Glow> glowArrayList = new ArrayList<>();
-    for (String event : EVENTS) {
-      String url = new GlowServiceReq(address, event).genUrl();
+    for (EventEnum event : EVENTS) {
+      String url = new GlowServiceReq(address, event.getQueryLabel()).genUrl();
       // 使用exchange方法发送请求
       ResponseEntity<GlowServiceRsp> glowServiceRsp =
           restTemplate.exchange(url, HttpMethod.GET, getStringHttpEntity(), GlowServiceRsp.class);
@@ -89,6 +95,7 @@ public class GlowService {
         return new ArrayList<>();
       }
       Glow glowRsp = glowServiceRspBody.toGlow();
+      glowRsp.setEvent(event);
       if (!glowRsp.ok()) {
         log.error("glow query error, address = {}, event = {}, rsp = {}", address, event, glowRsp);
         continue;

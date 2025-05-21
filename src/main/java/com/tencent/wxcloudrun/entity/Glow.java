@@ -1,6 +1,8 @@
 package com.tencent.wxcloudrun.entity;
 
 import java.io.Serializable;
+
+import com.tencent.wxcloudrun.constant.EventEnum;
 import lombok.Data;
 
 /**
@@ -24,6 +26,8 @@ public class Glow implements Serializable {
 
   private String status;
 
+  private EventEnum event;
+
   public boolean ok() {
     return "ok".equals(status);
   }
@@ -33,13 +37,14 @@ public class Glow implements Serializable {
   }
 
   public boolean isBeautiful() {
-    return getNumQuality() >= 0.3;
+    return getNumQuality() >= 0.3 && getNumAod() <= 0.5;
   }
 
   public String detailStrFormat() {
-      return getFormattedEventTime() +
+      return getEvent().getDesc()+ "\n"+
+              getFormattedEventTime() +
               "\n质量：" + String.format("%.2f", getNumQuality()) + getStrQuality() +
-              "\nAOD：" + String.format("%.2f", getNumAod()) + getStrAod();
+              "\n污染：" + String.format("%.2f", getNumAod()) + getStrAod();
   }
 
   public String getFormattedEventTime() {
