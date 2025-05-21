@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.entity.Glow;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -50,10 +51,12 @@ public class GlowService {
     }
     // 过滤掉不美的和过去的
     ArrayList<Glow> glowResFiltered = new ArrayList<>();
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+    DateTimeFormatter formatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
     for (Glow glow : glowRes) {
       LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
+      log.info("now = {}, parsedTime = {}", now, parsedTime);
       if (now.isBefore(parsedTime) && glow.isBeautiful()) {
         glowResFiltered.add(glow);
       }
