@@ -96,7 +96,7 @@ public class GlowService {
         continue;
       }
       glowArrayList.add(glowRsp);
-      log.info("glow: {}", glowRsp);
+      log.info("queryGlow get glow: {}", glowRsp);
     }
     return glowArrayList;
   }

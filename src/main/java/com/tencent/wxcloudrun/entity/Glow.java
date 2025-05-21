@@ -29,7 +29,7 @@ public class Glow implements Serializable {
   }
 
   public boolean isNotReady() {
-    return "-".equals(quality);
+    return "没有该时次的预报".equals(summary);
   }
 
   public boolean isBeautiful() {
