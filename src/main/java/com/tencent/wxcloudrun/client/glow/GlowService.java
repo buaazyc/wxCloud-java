@@ -2,6 +2,7 @@ package com.tencent.wxcloudrun.client.glow;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.entity.Glow;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -51,9 +52,9 @@ public class GlowService {
     }
     // 过滤掉不美的和过去的
     ArrayList<Glow> glowResFiltered = new ArrayList<>();
-    LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+    LocalDateTime now = LocalDateTime.now(ZoneId.of(Constants.LOCAL_ZONE_ID));
     DateTimeFormatter formatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of(Constants.LOCAL_ZONE_ID));
     for (Glow glow : glowRes) {
       LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
       log.info("now = {}, parsedTime = {}", now, parsedTime);
