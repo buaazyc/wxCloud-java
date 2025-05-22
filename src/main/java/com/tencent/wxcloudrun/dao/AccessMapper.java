@@ -1,6 +1,6 @@
 package com.tencent.wxcloudrun.dao;
 
-import com.tencent.wxcloudrun.entity.Access;
+import com.tencent.wxcloudrun.dataobject.AccessDO;
 import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,14 +14,14 @@ public interface AccessMapper {
    *
    * @param access 访问记录
    */
-  void insertAccess(Access access);
+  void insertAccess(AccessDO access);
 
   /**
    * 获取最近一段时间内所有用户的最近一次访问记录
    *
    * @return 访问记录列表
    */
-  ArrayList<Access> getLastAccesses();
+  ArrayList<AccessDO> getLastAccesses();
 
   /**
    * 获取所有用户的城市列表

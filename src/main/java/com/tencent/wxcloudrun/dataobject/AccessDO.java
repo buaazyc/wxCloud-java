@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.entity;
+package com.tencent.wxcloudrun.dataobject;
 
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
@@ -12,7 +12,7 @@ import lombok.Data;
  * @author zhangyichuan
  */
 @Data
-public class Access implements Serializable {
+public class AccessDO implements Serializable {
 
   /** 消息ID */
   private String msgId;
@@ -39,7 +39,7 @@ public class Access implements Serializable {
   private String rsp;
 
   /** 全参数构造函数 */
-  public Access(
+  public AccessDO(
       String msgId,
       String msgType,
       String fromUserName,
@@ -58,7 +58,7 @@ public class Access implements Serializable {
     this.rsp = rsp;
   }
 
-  public Access(Map<String, String> headers, WxRequest req, WxResponse rsp) {
+  public AccessDO(Map<String, String> headers, WxRequest req, WxResponse rsp) {
     this.msgId = req.getMsgId();
     this.msgType = req.getMsgType();
     this.fromUserName = req.getFromUserName();

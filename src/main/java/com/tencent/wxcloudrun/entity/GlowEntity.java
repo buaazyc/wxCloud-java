@@ -13,7 +13,7 @@ import lombok.Data;
  *     2.0~2.5：世纪大烧，火烧云范围很广、接近满云量、颜色明亮鲜艳、持续时间长，且大气非常通透；
  */
 @Data
-public class Glow implements Serializable {
+public class GlowEntity implements Serializable {
   private String summary;
 
   private String placeHolder;

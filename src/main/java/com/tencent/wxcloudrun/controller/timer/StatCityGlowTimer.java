@@ -4,7 +4,7 @@ import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.entity.Glow;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 @SpringBootApplication
 @RequiredArgsConstructor
 @Slf4j
-public class StatCityGlow {
+public class StatCityGlowTimer {
   private final AccessMapper accessMapper;
 
   private final GlowService glowService;
@@ -53,7 +53,7 @@ public class StatCityGlow {
         log.error("sleep error", e);
       }
       // 增加过滤
-      ArrayList<Glow> glows = glowService.queryGlowWithFilter(city ,true);
+      ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(city ,true);
       String glowRes = glowService.formatGlowStrRes(glows);
       if ("".equals(glowRes)) {
         continue;

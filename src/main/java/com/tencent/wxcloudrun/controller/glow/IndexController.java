@@ -1,10 +1,10 @@
-package com.tencent.wxcloudrun.controller.web;
+package com.tencent.wxcloudrun.controller.glow;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.entity.Access;
-import com.tencent.wxcloudrun.entity.Glow;
+import com.tencent.wxcloudrun.dataobject.AccessDO;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 
@@ -45,7 +45,7 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
-    ArrayList<Glow> glows = glowService.queryGlowWithFilter(req.getContent(), false);
+    ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(req.getContent(), false);
     String content = glowService.formatGlowStrRes(glows);
     if (!"".equals(content)) {
       content += "\n"+glowService.end();
@@ -60,7 +60,7 @@ public class IndexController {
 
     // 记录访问日志
     if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
-      accessMapper.insertAccess(new Access(headers, req, rsp));
+      accessMapper.insertAccess(new AccessDO(headers, req, rsp));
     }
     return rsp;
   }

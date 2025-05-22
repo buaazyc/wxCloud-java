@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.constant.EventEnum;
-import com.tencent.wxcloudrun.entity.Glow;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -35,17 +35,17 @@ public class GlowService {
   };
 
   /** 缓存60min */
-  private final Cache<String, ArrayList<Glow>> cache =
+  private final Cache<String, ArrayList<GlowEntity>> cache =
       Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES).build();
 
 
-  public String formatGlowStrRes(ArrayList<Glow> glows) {
+  public String formatGlowStrRes(ArrayList<GlowEntity> glows) {
     if (glows.isEmpty()) {
       return "";
     }
     StringBuilder content =
             new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云预测\n");
-    for (Glow glow : glows) {
+    for (GlowEntity glow : glows) {
       content.append("\n").append(glow.detailStrFormat()).append("\n------------------------");
     }
     return content.toString();
@@ -55,17 +55,17 @@ public class GlowService {
     return "\n质量越高越好，污染越低越好";
   }
 
-  public ArrayList<Glow> queryGlowWithFilter(String address, boolean filter) {
-    ArrayList<Glow> glowRes = queryGlowResWithCache(address);
+  public ArrayList<GlowEntity> queryGlowWithFilter(String address, boolean filter) {
+    ArrayList<GlowEntity> glowRes = queryGlowResWithCache(address);
     if (!filter) {
       return glowRes;
     }
     // 过滤掉不美的和过去的
-    ArrayList<Glow> glowResFiltered = new ArrayList<>();
+    ArrayList<GlowEntity> glowResFiltered = new ArrayList<>();
     LocalDateTime now = LocalDateTime.now(ZoneId.of(Constants.LOCAL_ZONE_ID));
     DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of(Constants.LOCAL_ZONE_ID));
-    for (Glow glow : glowRes) {
+    for (GlowEntity glow : glowRes) {
       LocalDateTime parsedTime = LocalDateTime.parse(glow.getFormattedEventTime(), formatter);
       if (now.isBefore(parsedTime) && glow.isBeautiful()) {
         glowResFiltered.add(glow);
@@ -74,20 +74,20 @@ public class GlowService {
     return glowResFiltered;
   }
 
-  private ArrayList<Glow> queryGlowResWithCache(String address) {
-    ArrayList<Glow> cacheGlows = cache.getIfPresent(address);
+  private ArrayList<GlowEntity> queryGlowResWithCache(String address) {
+    ArrayList<GlowEntity> cacheGlows = cache.getIfPresent(address);
     if (cacheGlows != null) {
       log.info("cache hit, address = {}", address);
       return cacheGlows;
     }
     log.info("cache miss, address = {}", address);
-    ArrayList<Glow> glows = queryGlow(address);
+    ArrayList<GlowEntity> glows = queryGlow(address);
     cache.put(address, glows);
     return glows;
   }
 
-  private ArrayList<Glow> queryGlow(String address) {
-    ArrayList<Glow> glowArrayList = new ArrayList<>();
+  private ArrayList<GlowEntity> queryGlow(String address) {
+    ArrayList<GlowEntity> glowArrayList = new ArrayList<>();
     for (EventEnum event : EVENTS) {
       String url = new GlowServiceReq(address, event.getQueryLabel()).genUrl();
       // 使用exchange方法发送请求
@@ -98,7 +98,7 @@ public class GlowService {
         log.error("glowServiceRspBody is null");
         return new ArrayList<>();
       }
-      Glow glowRsp = glowServiceRspBody.toGlow();
+      GlowEntity glowRsp = glowServiceRspBody.toGlow();
       glowRsp.setEvent(event);
       if (!glowRsp.ok()) {
         log.error("glow query error, address = {}, event = {}, rsp = {}", address, event.getQueryLabel(), glowRsp);

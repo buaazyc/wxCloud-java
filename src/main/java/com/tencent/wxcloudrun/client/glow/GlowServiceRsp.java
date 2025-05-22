@@ -1,7 +1,7 @@
 package com.tencent.wxcloudrun.client.glow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tencent.wxcloudrun.entity.Glow;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import lombok.Data;
 
 /**
@@ -28,8 +28,8 @@ public class GlowServiceRsp {
   @JsonProperty("status")
   private String status;
 
-  public Glow toGlow() {
-    Glow glow = new Glow();
+  public GlowEntity toGlow() {
+    GlowEntity glow = new GlowEntity();
     glow.setSummary(summary);
     glow.setPlaceHolder(placeHolder);
     glow.setAod(aod);
