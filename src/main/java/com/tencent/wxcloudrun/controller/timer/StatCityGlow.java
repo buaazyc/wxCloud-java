@@ -37,7 +37,7 @@ public class StatCityGlow {
     executeTask();
   }
 
-  @Scheduled(cron = "0 30 9,12,19 * * *", zone = "Asia/Shanghai")
+  @Scheduled(cron = "0 40 13 * * *", zone = "Asia/Shanghai")
   public void scheduledTask() {
     executeTask();
   }
