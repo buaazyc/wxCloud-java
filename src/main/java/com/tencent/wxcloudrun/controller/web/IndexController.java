@@ -10,7 +10,6 @@ import com.tencent.wxcloudrun.provider.WxResponse;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +46,16 @@ public class IndexController {
     log.info("headers={} req={}", headers, req);
 
     ArrayList<Glow> glows = glowService.queryGlowWithFilter(req.getContent(), false);
+    String content = glowService.formatGlowStrRes(glows);
+    if (!"".equals(content)) {
+      content += "\n"+glowService.end();
+    }
 
     // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
-    rsp.setContent(glowService.formatGlowStrRes(glows)+"\n"+glowService.end());
+    rsp.setContent(content);
     log.info("rsp = {}", rsp);
 
     // 记录访问日志

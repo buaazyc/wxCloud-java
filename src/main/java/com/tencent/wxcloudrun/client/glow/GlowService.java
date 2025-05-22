@@ -101,12 +101,12 @@ public class GlowService {
       Glow glowRsp = glowServiceRspBody.toGlow();
       glowRsp.setEvent(event);
       if (!glowRsp.ok()) {
-        log.error("glow query error, address = {}, event = {}, rsp = {}", address, event, glowRsp);
+        log.error("glow query error, address = {}, event = {}, rsp = {}", address, event.getQueryLabel(), glowRsp);
         continue;
       }
       if (glowRsp.isNotReady()) {
         log.info(
-            "glow query not ready, address = {}, event = {}, rsp = {}", address, event, glowRsp);
+            "glow query not ready, address = {}, event = {}, rsp = {}", address, event.getQueryLabel(), glowRsp);
         continue;
       }
       glowArrayList.add(glowRsp);
