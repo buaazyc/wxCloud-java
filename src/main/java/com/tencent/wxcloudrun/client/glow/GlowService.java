@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.client.glow;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.client.city.CityService;
+import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.constant.EventEnum;
 import com.tencent.wxcloudrun.entity.GlowEntity;
@@ -29,6 +30,8 @@ public class GlowService {
   @Autowired private RestTemplate restTemplate;
 
   @Autowired private CityService cityService;
+
+  @Autowired private AliService aliService;
 
   private static final EventEnum[] EVENTS = {
     EventEnum.RISE_1,
@@ -90,6 +93,8 @@ public class GlowService {
   }
 
   private ArrayList<GlowEntity> queryGlow(String address) {
+    address = aliService.callWithMessage(address);
+    log.info("address after ai = {}", address);
     ArrayList<GlowEntity> glowArrayList = new ArrayList<>();
     for (EventEnum event : EVENTS) {
       String url = new GlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
