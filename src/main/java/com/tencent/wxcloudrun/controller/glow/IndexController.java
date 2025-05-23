@@ -40,13 +40,14 @@ public class IndexController {
    */
   @PostMapping("/index")
   public WxResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
+    long startTime = System.currentTimeMillis();
     WxResponse rsp = new WxResponse();
     if (req == null || req.getContent() == null) {
       return rsp;
     }
     log.info("headers={} req={}", headers, req);
 
-    String address = aliService.callWithMessage(req.getContent());
+    String address = aliService.parseCity(req.getContent());
     log.info("address after ai = {}", address);
     ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(address, false);
     String content = glowService.formatGlowStrRes(glows);
@@ -62,6 +63,7 @@ public class IndexController {
     if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
       accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", address));
     }
+    log.info("cost={}s", (System.currentTimeMillis() - startTime)/1000);
     return rsp;
   }
 }
