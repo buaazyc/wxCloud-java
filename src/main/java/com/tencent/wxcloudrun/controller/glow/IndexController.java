@@ -36,6 +36,7 @@ public class IndexController {
    *
    * @param req 微信请求参数
    * @return 响应消息
+   *
    */
   @PostMapping("/index")
   public WxResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
@@ -47,9 +48,6 @@ public class IndexController {
 
     ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(req.getContent(), false);
     String content = glowService.formatGlowStrRes(glows);
-    if (!"".equals(content)) {
-      content += "\n"+glowService.end();
-    }
 
     // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());

@@ -40,11 +40,18 @@ public class GlowEntity implements Serializable {
     return getNumQuality() >= 0.3 && getNumAod() <= 0.5;
   }
 
+  public boolean isBad() {
+    return getNumQuality() < 0.2;
+  }
+
   public String detailStrFormat() {
-      return getEvent().getDesc()+ "\n"+
-              getFormattedEventTime() +
-              "\n质量：" + getStrQuality() +
-              "\n污染：" + getStrAod();
+    if (isBad()) {
+      return getEvent().getDesc() + " 不烧\n" + getFormattedEventTime();
+    }
+    return getEvent().getDesc()+ "\n"+
+            getFormattedEventTime() +
+            "\n质量：" + getStrQuality() +
+            "\n污染：" + getStrAod();
   }
 
   public String getFormattedEventTime() {
