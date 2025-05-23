@@ -57,10 +57,6 @@ public class GlowService {
     return content.toString();
   }
 
-  public String end(){
-    return "\n质量越高越好，污染越低越好";
-  }
-
   public ArrayList<GlowEntity> queryGlowWithFilter(String address, boolean filter) {
     ArrayList<GlowEntity> glowRes = queryGlowResWithCache(address);
     if (!filter) {
@@ -93,8 +89,6 @@ public class GlowService {
   }
 
   private ArrayList<GlowEntity> queryGlow(String address) {
-    address = aliService.callWithMessage(address);
-    log.info("address after ai = {}", address);
     ArrayList<GlowEntity> glowArrayList = new ArrayList<>();
     for (EventEnum event : EVENTS) {
       String url = new GlowServiceReq(address, event.getQueryLabel()).selectCityUrl();

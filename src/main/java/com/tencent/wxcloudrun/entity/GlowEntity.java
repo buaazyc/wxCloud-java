@@ -49,7 +49,7 @@ public class GlowEntity implements Serializable {
     }
     return getEvent().getDesc()+ "\n"+
             getFormattedEventTime() +
-            "\n质量：" + getStrQuality() +
+            "\n鲜艳度：" + getStrQuality() +
             "\n污染：" + getStrAod();
   }
 

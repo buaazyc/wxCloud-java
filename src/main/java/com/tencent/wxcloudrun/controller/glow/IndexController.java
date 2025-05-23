@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.glow;
 
 import com.tencent.wxcloudrun.client.glow.GlowService;
+import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dataobject.AccessDO;
@@ -28,6 +29,7 @@ public class IndexController {
 
   private final AccessMapper accessMapper;
   private final GlowService glowService;
+  private final AliService aliService;
 
   /**
    * 处理微信消息请求
@@ -44,7 +46,9 @@ public class IndexController {
     }
     log.info("headers={} req={}", headers, req);
 
-    ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(req.getContent(), false);
+    String address = aliService.callWithMessage(req.getContent());
+    log.info("address after ai = {}", address);
+    ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(address, false);
     String content = glowService.formatGlowStrRes(glows);
 
     // 构造返回rsp
@@ -56,7 +60,7 @@ public class IndexController {
 
     // 记录访问日志
     if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
-      accessMapper.insertAccess(new AccessDO(headers, req, rsp));
+      accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", address));
     }
     return rsp;
   }
