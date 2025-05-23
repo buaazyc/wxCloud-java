@@ -107,7 +107,7 @@ public class GlowService {
         continue;
       }
       if (glowRsp.isNotReady()) {
-        log.info(
+        log.warn(
             "glow query not ready, address = {}, event = {}, rsp = {}", address, event.getQueryLabel(), glowRsp);
         continue;
       }

@@ -45,25 +45,25 @@ public class IndexController {
     if (req == null || req.getContent() == null) {
       return rsp;
     }
-    log.info("headers={} req={}", headers, req);
+    log.info("create req={}", req);
 
     String address = aliService.parseCity(req.getContent());
-    log.info("address after ai = {}", address);
+    log.info("aliService parseCity content = {} address = {} cost = {}",
+            req.getContent(), address, System.currentTimeMillis() - startTime);
+
     ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(address, false);
     String content = glowService.formatGlowStrRes(glows);
-
-    // 构造返回rsp
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
     rsp.setContent(content);
-    log.info("rsp = {}", rsp);
+    log.info("glowService queryGlowWithFilter rsp = {} cost = {}", rsp, System.currentTimeMillis() - startTime);
 
     // 记录访问日志
     if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
       accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", address));
     }
-    log.info("cost={}s", (System.currentTimeMillis() - startTime)/1000);
+    log.info("accessMapper insertAccess cost= {}", (System.currentTimeMillis() - startTime));
     return rsp;
   }
 }

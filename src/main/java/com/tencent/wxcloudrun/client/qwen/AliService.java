@@ -30,7 +30,7 @@ public class AliService {
         return callWithMessage(sysContent, content);
     }
 
-    public String callWithMessage(String sysContent, String content)  {
+    private String callWithMessage(String sysContent, String content)  {
         Generation gen = new Generation();
         Message systemMsg = Message.builder()
                 .role(Role.SYSTEM.getValue())
@@ -48,7 +48,6 @@ public class AliService {
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .build();
         try {
-            log.info("content = {}, res is gen by qwen...", content);
             GenerationResult result = gen.call(param);
             return result.getOutput().getChoices().get(0).getMessage().getContent();
         } catch (ApiException | NoApiKeyException | InputRequiredException e) {
