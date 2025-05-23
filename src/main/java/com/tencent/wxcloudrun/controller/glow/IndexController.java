@@ -7,10 +7,8 @@ import com.tencent.wxcloudrun.dataobject.AccessDO;
 import com.tencent.wxcloudrun.entity.GlowEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
-
 import java.util.ArrayList;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

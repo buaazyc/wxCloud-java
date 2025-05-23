@@ -3,11 +3,10 @@ package com.tencent.wxcloudrun.controller.ieg;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 /**
  * @author zhangyichuan

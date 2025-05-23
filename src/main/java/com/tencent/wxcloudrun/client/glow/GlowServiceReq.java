@@ -17,7 +17,7 @@ public class GlowServiceReq {
     this.event = event;
   }
 
-  public String genUrl() {
+  public String selectCityUrl() {
     return String.format(
         "%s?intend=select_city&query_city=%s&event_date=None&event=%s", URL, address, event);
   }

@@ -1,8 +1,7 @@
 package com.tencent.wxcloudrun.entity;
 
-import java.io.Serializable;
-
 import com.tencent.wxcloudrun.constant.EventEnum;
+import java.io.Serializable;
 import lombok.Data;
 
 /**
