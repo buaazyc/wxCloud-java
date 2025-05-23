@@ -40,7 +40,7 @@ public class GlowEntity implements Serializable {
   }
 
   public boolean isBad() {
-    return getNumQuality() < 0.2;
+    return getNumQuality() < 0.05;
   }
 
   public String detailStrFormat() {
