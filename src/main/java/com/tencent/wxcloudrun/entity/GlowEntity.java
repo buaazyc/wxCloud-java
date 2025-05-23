@@ -45,7 +45,7 @@ public class GlowEntity implements Serializable {
 
   public String detailStrFormat() {
     if (isBad()) {
-      return getEvent().getDesc() + " 不烧\n" + getFormattedEventTime();
+      return getEvent().getDesc() + " 不烧\n";
     }
     return getEvent().getDesc()+ "\n"+
             getFormattedEventTime() +

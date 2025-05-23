@@ -49,6 +49,4 @@ public class CityService {
         // 创建带请求头的请求实体
         return new HttpEntity<>(headers);
     }
-
-
 }
