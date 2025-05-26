@@ -40,9 +40,9 @@ public class GlowService {
     EventEnum.SUNSET_2
   };
 
-  /** 缓存60min */
+  /** 缓存59min */
   private final Cache<String, ArrayList<GlowEntity>> cache =
-      Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES).build();
+      Caffeine.newBuilder().expireAfterWrite(59, TimeUnit.MINUTES).build();
 
 
   public String formatGlowStrRes(ArrayList<GlowEntity> glows) {
@@ -76,7 +76,7 @@ public class GlowService {
     return glowResFiltered;
   }
 
-  private ArrayList<GlowEntity> queryGlowResWithCache(String address) {
+  public ArrayList<GlowEntity> queryGlowResWithCache(String address) {
     ArrayList<GlowEntity> cacheGlows = cache.getIfPresent(address);
     if (cacheGlows != null) {
       log.info("cache hit, address = {}", address);

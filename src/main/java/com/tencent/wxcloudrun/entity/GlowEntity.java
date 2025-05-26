@@ -36,7 +36,7 @@ public class GlowEntity implements Serializable {
   }
 
   public boolean isBeautiful() {
-    return getNumQuality() >= 0.3;
+    return getNumQuality() >= 0.4 && getNumAod() < 0.3;
   }
 
   public boolean isBad() {
@@ -65,7 +65,7 @@ public class GlowEntity implements Serializable {
     String num = String.format("%.2f", getNumQuality());
     String str = quality.split("<br>")[1].replace("\n", "");
     if (isBeautiful()) {
-      return "【" + num + "】" + str +"!!!";
+      return  num + str +"!!!";
     }
     return num + str;
   }
