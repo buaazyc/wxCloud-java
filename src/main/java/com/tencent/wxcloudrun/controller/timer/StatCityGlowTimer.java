@@ -33,28 +33,28 @@ public class StatCityGlowTimer {
 
   @PostConstruct
   public void runOnceOnStartup() {
-    refreshTask();
+    refreshAllCityRes();
   }
 
   /**
    * 定时统计火烧云情况，并发送邮件
    */
   @Scheduled(cron = "0 40 11 * * *", zone = "Asia/Shanghai")
-  public void scheduledTask() {
-    executeTask();
+  public void dayCronTask() {
+    checkBeautifulGlowWithEmail();
   }
 
   /**
    * 每小时定时刷新缓存
    */
   @Scheduled(cron = "15 40 * * * *", zone = "Asia/Shanghai")
-  public void refreshTask() {
-    refresh();
+  public void hourCronTask() {
+    refreshAllCityRes();
   }
 
 
 
-  public void executeTask() {
+  public void checkBeautifulGlowWithEmail() {
     StringBuilder subject = new StringBuilder();
     for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
@@ -74,11 +74,14 @@ public class StatCityGlowTimer {
       log.info("city is {}, glowRes is beautiful {}", city, glowRes);
       subject.append(glowRes).append("-----------------------------------------").append("\n");
     }
+    if (subject.length() == 0) {
+      return;
+    }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
     log.info("statCityGlow end, now is {}, stat res = {}", LocalDateTime.now(), subject);
   }
 
-  private void refresh() {
+  private void refreshAllCityRes() {
     for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
       // 保护接口，每个城市查询后休眠0.1秒
