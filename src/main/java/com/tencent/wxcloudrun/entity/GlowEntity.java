@@ -36,7 +36,9 @@ public class GlowEntity implements Serializable {
   }
 
   public boolean isBeautiful() {
-    return getNumQuality() >= 0.4 && getNumAod() < 0.3;
+    return (getNumQuality() >= 0.4 && getNumAod() < 0.4)
+            || (getNumQuality() >= 0.6 && getNumAod() < 0.5)
+            || getNumQuality() >= 1;
   }
 
   public boolean isBad() {

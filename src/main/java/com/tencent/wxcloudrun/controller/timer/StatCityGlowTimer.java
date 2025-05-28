@@ -39,7 +39,7 @@ public class StatCityGlowTimer {
   /**
    * 定时统计火烧云情况，并发送邮件
    */
-  @Scheduled(cron = "0 40 11 * * *", zone = "Asia/Shanghai")
+  @Scheduled(cron = "0 30 9,11 * * *", zone = "Asia/Shanghai")
   public void dayCronTask() {
     checkBeautifulGlowWithEmail();
   }
@@ -75,10 +75,11 @@ public class StatCityGlowTimer {
       subject.append(glowRes).append("-----------------------------------------").append("\n");
     }
     if (subject.length() == 0) {
+      log.info("no beautiful glow");
       return;
     }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
-    log.info("statCityGlow end, now is {}, stat res = {}", LocalDateTime.now(), subject);
+    log.info("statCityGlow end stat res = {}", subject);
   }
 
   private void refreshAllCityRes() {
