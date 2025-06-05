@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class GlowServiceReq {
-  private static final String URL = "https://sunsetbot.top/";
+  private static final String URL = "http://sunsetbot.top/";
   private final String address;
   private final String event;
 

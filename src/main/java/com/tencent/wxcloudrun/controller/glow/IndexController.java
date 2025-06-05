@@ -1,11 +1,14 @@
 package com.tencent.wxcloudrun.controller.glow;
 
+import com.tencent.wxcloudrun.client.amap.geocode.GeocodeService;
+import com.tencent.wxcloudrun.client.geovisearth.glow.NewGlowService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dataobject.AccessDO;
 import com.tencent.wxcloudrun.entity.GlowEntity;
+import com.tencent.wxcloudrun.entity.NewGlowEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 import java.util.ArrayList;
@@ -28,8 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
 
   private final AccessMapper accessMapper;
-  private final GlowService glowService;
+
+  private final NewGlowService glowService;
+
   private final AliService aliService;
+
+  private final GeocodeService geocodeService;
 
   /**
    * 处理微信消息请求
@@ -51,8 +58,11 @@ public class IndexController {
     log.info("aliService parseCity content = {} address = {} cost = {}",
             req.getContent(), address, System.currentTimeMillis() - startTime);
 
-    ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(address, false);
-    String content = glowService.formatGlowStrRes(glows);
+    String location = geocodeService.queryGeocodeWithCache(address);
+
+    NewGlowEntity glow = glowService.queryGlow(location);
+    glow.setAddress(address);
+    String content = glow.format();
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
