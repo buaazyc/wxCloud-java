@@ -49,23 +49,27 @@ public class NewGlowEntity {
             } else {
                 res = date + "-" + amPm +
                         "\n鲜艳度：" + quality +
-                        "\n等级：" + qualityLevel +"【"+ qualityLevelMap.get(qualityLevel) + "】";
+                        "\n等级：" + qualityLevel +"【"+ qualityLevelFormat(qualityLevel) + "】";
             }
             return res + "\n---------------------------";
         }
+    }
 
-        private Map<Integer, String> qualityLevelMap = new HashMap<Integer, String>() {{
-            put(0, "不烧");
-            put(1, "微微烧");
-            put(2, "小烧");
-            put(3, "小烧到中烧");
-            put(4, "中烧");
-            put(5, "中烧到大烧");
-            put(6, "大烧");
-            put(7, "优质大烧");
-            put(8, "超级大烧");
-            put(9, "世纪大烧");
-        }};
+    private static Map<Integer, String> qualityLevelMap = new HashMap<Integer, String>() {{
+        put(0, "不烧");
+        put(1, "微微烧");
+        put(2, "小烧");
+        put(3, "小烧到中烧");
+        put(4, "中烧");
+        put(5, "中烧到大烧");
+        put(6, "大烧");
+        put(7, "优质大烧");
+        put(8, "超级大烧");
+        put(9, "世纪大烧");
+    }};
+
+    private static String qualityLevelFormat(Integer qualityLevel) {
+        return qualityLevelMap.get(qualityLevel);
     }
 
     public String format() {

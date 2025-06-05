@@ -16,7 +16,6 @@ import java.util.List;
  * @date 2025/6/5
  */
 @Data
-@Slf4j
 public class NewGlowRsp {
 
     @JsonProperty("status")
@@ -87,7 +86,6 @@ public class NewGlowRsp {
         for (DataItem dataItem : result.getDataList()) {
             NewGlowEntity.SingleGlowEntity entity = new NewGlowEntity.SingleGlowEntity();
             ZonedDateTime dateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
-            log.info("dateTime before {} after {}", dataItem.getFcTime(), dateTime);
             entity.setDate(TimeUtils.parseDay(TimeUtils.getDaysBetween(today, dateTime)));
             entity.setAmPm(TimeUtils.getAmPm(dateTime));
 
