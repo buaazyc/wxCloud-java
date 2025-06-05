@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.controller.glow;
 
+import com.tencent.wxcloudrun.client.amap.geocode.GeocodeRsp;
 import com.tencent.wxcloudrun.client.amap.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.geovisearth.glow.NewGlowService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
@@ -58,10 +59,10 @@ public class IndexController {
     log.info("aliService parseCity content = {} address = {} cost = {}",
             req.getContent(), address, System.currentTimeMillis() - startTime);
 
-    String location = geocodeService.queryGeocodeWithCache(address);
+    GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(address);
 
-    NewGlowEntity glow = glowService.queryGlow(location);
-    glow.setAddress(address);
+    NewGlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
+    glow.setAddress(geocodeRsp.getFormattedAddress());
     String content = glow.format();
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());

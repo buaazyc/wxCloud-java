@@ -27,14 +27,14 @@ public class GeocodeService {
     private RestTemplate restTemplate;
 
     /** 缓存1month */
-    private final Cache<String, String> cache =
+    private final Cache<String, GeocodeRsp> cache =
             Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
-    public String queryGeocodeWithCache(String address) {
-        String location = cache.getIfPresent(address);
-        if (location != null) {
-            log.info("cache hit, address = {}, location = {}", address, location);
-            return location;
+    public GeocodeRsp queryGeocodeWithCache(String address) {
+        GeocodeRsp rspInCache = cache.getIfPresent(address);
+        if (rspInCache != null) {
+            log.info("cache hit, address = {}, rspInCache = {}", address, rspInCache);
+            return rspInCache;
         }
         log.info("cache miss, address = {}", address);
         try {
@@ -51,15 +51,15 @@ public class GeocodeService {
                 log.error("queryGeocode error, address = {}, rsp = {}", address, rspBody);
                 return null;
             }
-            location = rspBody.getGeocodes().get(0).getLocation();
-            log.info("queryGeocode {} get location: {}", address, location);
-            cache.put(address, location);
+            log.info("queryGeocode {} get rspBody: {}", address, rspBody);
+            cache.put(address, rspBody);
+            return rspBody;
 
         }
         catch (Exception e) {
             log.error("queryGeocode error, address = {}", address, e);
         }
-        return location;
+        return null;
     }
 
     private static HttpEntity<String> getStringHttpEntity() {

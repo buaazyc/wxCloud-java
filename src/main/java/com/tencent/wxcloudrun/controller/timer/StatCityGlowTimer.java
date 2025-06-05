@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.controller.timer;
 
+import com.tencent.wxcloudrun.client.amap.geocode.GeocodeRsp;
 import com.tencent.wxcloudrun.client.amap.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.geovisearth.glow.NewGlowService;
@@ -43,7 +44,7 @@ public class StatCityGlowTimer {
 
   @PostConstruct
   public void runOnceOnStartup() {
-    tmp();
+//    tmp();
   }
   /**
    * 定时统计火烧云情况，并发送邮件
@@ -81,20 +82,6 @@ public class StatCityGlowTimer {
     log.info("statCityGlow end stat res = {}", subject);
   }
 
-  private void refreshAllCityRes() {
-    for (String city : accessMapper.getCityList()) {
-      // 查询火烧云情况
-      // 保护接口，每个城市查询后休眠1秒
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        log.error("sleep error", e);
-      }
-      ArrayList<GlowEntity> glows = glowService.queryGlowResWithCache(city);
-      log.info("city = {} glows = {}", city, glowService.formatGlowStrRes(glows));
-    }
-  }
-
   private void tmp() {
     for (String city : accessMapper.getCityList()) {
       try {
@@ -103,9 +90,9 @@ public class StatCityGlowTimer {
         log.error("sleep error", e);
       }
       city = "北京市朝阳区";
-      String location = geocodeService.queryGeocodeWithCache(city);
-      NewGlowEntity entity = newGlowService.queryGlow(location);
-      entity.setAddress(city);
+      GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(city);
+      NewGlowEntity entity = newGlowService.queryGlow(geocodeRsp.getLocation());
+      entity.setAddress(geocodeRsp.getFormattedAddress());
       log.info(entity.format());
       break;
     }

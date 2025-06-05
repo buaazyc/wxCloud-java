@@ -40,6 +40,12 @@ public class GeocodeRsp {
     public static class Geocode {
 
         /**
+         * 地址信息
+         */
+        @JsonProperty("formatted_address")
+        private String formattedAddress;
+
+        /**
          * 地址信息。经纬度，用逗号分隔
          */
         @JsonProperty("location")
@@ -48,5 +54,13 @@ public class GeocodeRsp {
 
     public boolean ok() {
         return "1".equals(status) && !geocodes.isEmpty();
+    }
+
+    public String getLocation() {
+        return geocodes.get(0).getLocation();
+    }
+
+    public String getFormattedAddress() {
+        return geocodes.get(0).getFormattedAddress();
     }
 }
