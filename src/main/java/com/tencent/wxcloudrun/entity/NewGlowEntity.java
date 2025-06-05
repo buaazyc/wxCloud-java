@@ -39,7 +39,7 @@ public class NewGlowEntity {
         private Integer aodLevel;
 
         public boolean isBad() {
-            return qualityLevel < 2;
+            return qualityLevel < 1;
         }
 
         public String format() {
