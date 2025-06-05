@@ -29,10 +29,16 @@ public class NewGlowService {
     private RestTemplate restTemplate;
 
     /** 缓存1h */
-    private final Cache<String, String> cache =
+    private final Cache<String, NewGlowEntity> cache =
             Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build();
 
     public NewGlowEntity queryGlow(String location) {
+        NewGlowEntity rspInCache = cache.getIfPresent(location);
+        if (rspInCache != null) {
+            log.info("queryGlow cache hit, location = {}, rspInCache = {}", location, rspInCache);
+            return rspInCache;
+        }
+        log.info("queryGlow cache miss, location = {}", location);
         String start = TimeUtils.getDay(0)+"00";
         String end = TimeUtils.getDay(3)+"23";
         String url = new NewGlowReq(location, start, end).genUrl();
@@ -52,6 +58,7 @@ public class NewGlowService {
         log.info("glowServiceRspBody: {}", glowServiceRspBody);
         NewGlowEntity entity = glowServiceRspBody.rspToEntity();
         log.info("NewGlowEntity: {}", entity);
+        cache.put(location, entity);
         return entity;
     }
 

@@ -33,10 +33,10 @@ public class GeocodeService {
     public GeocodeRsp queryGeocodeWithCache(String address) {
         GeocodeRsp rspInCache = cache.getIfPresent(address);
         if (rspInCache != null) {
-            log.info("cache hit, address = {}, rspInCache = {}", address, rspInCache);
+            log.info("queryGeocode cache hit, address = {}, rspInCache = {}", address, rspInCache);
             return rspInCache;
         }
-        log.info("cache miss, address = {}", address);
+        log.info("queryGeocode cache miss, address = {}", address);
         try {
             String url = new GeocodeReq(address).genUrl();
             log.info("queryGeocode url: {}", url);
