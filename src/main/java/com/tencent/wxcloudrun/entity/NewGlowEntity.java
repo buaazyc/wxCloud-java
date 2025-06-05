@@ -37,7 +37,7 @@ public class NewGlowEntity {
         private Integer aodLevel;
 
         public boolean isBad() {
-            return qualityLevel < 2;
+            return qualityLevel < 1;
         }
 
         public String format() {
@@ -47,8 +47,7 @@ public class NewGlowEntity {
             } else {
                 res = date + "-" + amPm +
                         "\n鲜艳度：" + quality +
-                        "\n等级：" + qualityLevel +
-                        "\n污染等级：" + aodLevel;
+                        "\n等级：" + qualityLevel;
             }
             return res + "\n---------------------------";
         }
@@ -59,6 +58,7 @@ public class NewGlowEntity {
         for (SingleGlowEntity glow : glows) {
             res.append("\n").append(glow.format());
         }
+        res.append("\n").append("注：等级越高越好");
         return res.toString();
     }
 }
