@@ -2,7 +2,9 @@ package com.tencent.wxcloudrun.entity;
 
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangyichuan
@@ -37,7 +39,7 @@ public class NewGlowEntity {
         private Integer aodLevel;
 
         public boolean isBad() {
-            return qualityLevel < 1;
+            return qualityLevel < 2;
         }
 
         public String format() {
@@ -47,10 +49,23 @@ public class NewGlowEntity {
             } else {
                 res = date + "-" + amPm +
                         "\n鲜艳度：" + quality +
-                        "\n等级：" + qualityLevel;
+                        "\n等级：" + qualityLevel +"【"+ qualityLevelMap.get(qualityLevel) + "】";
             }
             return res + "\n---------------------------";
         }
+
+        private Map<Integer, String> qualityLevelMap = new HashMap<Integer, String>() {{
+            put(0, "不烧");
+            put(1, "微微烧");
+            put(2, "小烧");
+            put(3, "小烧到中烧");
+            put(4, "中烧");
+            put(5, "中烧到大烧");
+            put(6, "大烧");
+            put(7, "优质大烧");
+            put(8, "超级大烧");
+            put(9, "世纪大烧");
+        }};
     }
 
     public String format() {
@@ -58,7 +73,6 @@ public class NewGlowEntity {
         for (SingleGlowEntity glow : glows) {
             res.append("\n").append(glow.format());
         }
-        res.append("\n").append("注：等级越高越好");
         return res.toString();
     }
 }
