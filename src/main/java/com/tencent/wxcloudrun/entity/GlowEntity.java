@@ -35,7 +35,7 @@ public class GlowEntity {
     private Integer aodLevel;
 
     public boolean isBad() {
-      return qualityLevel < 1;
+      return qualityLevel <= 0 || aodLevel <= 3;
     }
 
     public boolean isBeautiful() {
@@ -91,9 +91,9 @@ public class GlowEntity {
         {
           put(1, "重度雾霾");
           put(2, "轻度雾霾");
-          put(3, "雾霾");
+          put(3, "无蓝天");
           put(4, "普通");
-          put(5, "蓝天");
+          put(5, "通透");
           put(6, "水晶天");
           put(7, "高级水晶天");
         }
