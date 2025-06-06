@@ -35,7 +35,7 @@ public class GlowEntity {
     private Integer aodLevel;
 
     public boolean isBad() {
-      return qualityLevel <= 0 || aodLevel <= 3;
+      return qualityLevel <= 0;
     }
 
     public boolean isBeautiful() {
@@ -90,8 +90,8 @@ public class GlowEntity {
       new HashMap<Integer, String>() {
         {
           put(1, "重度雾霾");
-          put(2, "轻度雾霾");
-          put(3, "无蓝天");
+          put(2, "中度雾霾");
+          put(3, "轻度雾霾");
           put(4, "普通");
           put(5, "通透");
           put(6, "水晶天");
