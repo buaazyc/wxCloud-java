@@ -8,12 +8,10 @@ import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.entity.NewGlowEntity;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +57,7 @@ public class AliService {
                 .build();
         GenerationParam param = GenerationParam.builder()
                 .apiKey(System.getenv("QWEN_KEY"))
+                // https://bailian.console.aliyun.com/?tab=model#/model-market/detail/qwen-max?modelGroup=qwen-max
                 .model("qwen-max")
                 .temperature(0f)
                 .messages(Arrays.asList(systemMsg, userMsg))
