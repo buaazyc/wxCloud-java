@@ -37,8 +37,15 @@ public class IndexController {
   private final GeocodeService geocodeService;
 
   /**
-   * 处理微信消息请求 目前依赖三个外部接口和一个本地接口： 1. 阿里云qwen接口：解析城市 2. 高德geocode接口：根据城市获取经纬度 3. 地理云接口：查询火烧云情况 4.
-   * mysql：记录访问日志
+   * 处理微信消息请求 目前依赖三个外部接口和一个本地接口：
+   *
+   * <p>1. 阿里云qwen接口：解析城市
+   *
+   * <p>2. 高德geocode接口：根据城市获取经纬度
+   *
+   * <p>3. 地理云接口：查询火烧云情况
+   *
+   * <p>4. mysql：记录访问日志
    *
    * @param req 微信请求参数
    * @return 响应消息
@@ -52,14 +59,14 @@ public class IndexController {
     }
     log.info("create req={}", req);
 
-    String address = aliService.parseCity(req.getContent());
+    String city = aliService.parseCity(req.getContent());
     log.info(
-        "aliService parseCity content = {} address = {} cost = {}",
+        "aliService parseCity content = {} city = {} cost = {}",
         req.getContent(),
-        address,
+        city,
         System.currentTimeMillis() - startTime);
 
-    GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(address);
+    GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
     GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
     glow.setAddress(geocodeRsp.getFormattedAddress());
     String content = glow.messageFormat();
@@ -75,7 +82,7 @@ public class IndexController {
 
     // 记录访问日志
     if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
-      accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", address));
+      accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
     }
     log.info("accessMapper insertAccess cost= {}", (System.currentTimeMillis() - startTime));
     return rsp;

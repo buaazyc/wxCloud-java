@@ -17,6 +17,7 @@ public class GeocodeReq {
   }
 
   public String genUrl() {
-    return String.format("%s?address=%s&key=%s", URL, address, System.getenv("AMAP_KEY"));
+    return String.format(
+        "%s?address=%s&city=%s&key=%s", URL, address, address, System.getenv("AMAP_KEY"));
   }
 }

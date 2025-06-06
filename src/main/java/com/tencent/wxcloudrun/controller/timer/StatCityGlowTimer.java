@@ -6,6 +6,7 @@ import com.tencent.wxcloudrun.client.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
+import com.tencent.wxcloudrun.dataobject.AccessDO;
 import com.tencent.wxcloudrun.entity.GlowEntity;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class StatCityGlowTimer {
         log.error("sleep error", e);
       }
 
-      GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(city);
+      GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
       GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
       glow.setAddress(geocodeRsp.getFormattedAddress());
       String glowRes = glow.emailFormatWithFilter();
@@ -73,5 +74,21 @@ public class StatCityGlowTimer {
     }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
     log.info("statCityGlow end stat res = {}", subject);
+  }
+
+  public void checkNewLlm() {
+    for (AccessDO accessDO : accessMapper.getLastAccesses()) {
+      String newCity = aliService.parseCity(accessDO.getReq());
+      GeocodeRsp geocodeRsp = geocodeService.queryGeocode(newCity);
+      if (!newCity.contentEquals(geocodeRsp.getFormattedAddress())) {
+        log.error(
+            "content = {} new = {} old = {} location = {} formattedAddress = {}",
+            accessDO.getReq(),
+            newCity,
+            accessDO.getAccessKey(),
+            geocodeRsp.getLocation(),
+            geocodeRsp.getFormattedAddress());
+      }
+    }
   }
 }

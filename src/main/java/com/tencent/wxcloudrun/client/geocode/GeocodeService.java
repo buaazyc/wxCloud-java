@@ -3,14 +3,13 @@ package com.tencent.wxcloudrun.client.geocode;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.time.HttpUtils;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangyichuan
@@ -25,7 +24,7 @@ public class GeocodeService {
   private final Cache<String, GeocodeRsp> cache =
       Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
-  public GeocodeRsp queryGeocodeWithCache(String address) {
+  public GeocodeRsp queryGeocode(String address) {
     GeocodeRsp rspInCache = cache.getIfPresent(address);
     if (rspInCache != null) {
       log.info("queryGeocode cache hit, address = {}, rspInCache = {}", address, rspInCache);

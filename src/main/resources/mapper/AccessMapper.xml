@@ -30,7 +30,7 @@
         INNER JOIN (
         SELECT from_user_name as user_name, MAX(create_time) AS max_time
         FROM t_access_record
-        WHERE create_time > UNIX_TIMESTAMP(now()) - 2851200
+        WHERE create_time > UNIX_TIMESTAMP(now()) - 2851200 and length(access_key) > 0 and length(rsp) > 0
         GROUP BY from_user_name
         ) AS sub
         ON t.from_user_name = sub.user_name

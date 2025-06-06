@@ -42,7 +42,6 @@ public class AccessDO implements Serializable {
 
   private String accessKey;
 
-
   /** 全参数构造函数 */
   public AccessDO(
       String msgId,
@@ -52,7 +51,9 @@ public class AccessDO implements Serializable {
       Integer createTime,
       String header,
       String req,
-      String rsp) {
+      String rsp,
+      String accessType,
+      String accessKey) {
     this.msgId = msgId;
     this.msgType = msgType;
     this.fromUserName = fromUserName;
@@ -61,9 +62,16 @@ public class AccessDO implements Serializable {
     this.header = header;
     this.req = req;
     this.rsp = rsp;
+    this.accessType = accessType;
+    this.accessKey = accessKey;
   }
 
-  public AccessDO(Map<String, String> headers, WxRequest req, WxResponse rsp, String access_type, String access_key) {
+  public AccessDO(
+      Map<String, String> headers,
+      WxRequest req,
+      WxResponse rsp,
+      String access_type,
+      String access_key) {
     this.msgId = req.getMsgId();
     this.msgType = req.getMsgType();
     this.fromUserName = req.getFromUserName();
