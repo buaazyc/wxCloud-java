@@ -1,22 +1,19 @@
-package com.tencent.wxcloudrun.client.geovisearth.glow;
+package com.tencent.wxcloudrun.client.glow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tencent.wxcloudrun.entity.NewGlowEntity;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import com.tencent.wxcloudrun.time.TimeUtils;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
 /**
  * @author zhangyichuan
  * @date 2025/6/5
  */
 @Data
-public class NewGlowRsp {
+public class GlowRsp {
 
     @JsonProperty("status")
     private int status;
@@ -79,12 +76,12 @@ public class NewGlowRsp {
         return status == 0;
     }
 
-    public NewGlowEntity rspToEntity() {
-        NewGlowEntity res = new NewGlowEntity();
+    public GlowEntity rspToEntity() {
+        GlowEntity res = new GlowEntity();
         res.setGlows(new ArrayList<>());
         ZonedDateTime today = TimeUtils.today();
         for (DataItem dataItem : result.getDataList()) {
-            NewGlowEntity.SingleGlowEntity entity = new NewGlowEntity.SingleGlowEntity();
+            GlowEntity.SingleGlowEntity entity = new GlowEntity.SingleGlowEntity();
             ZonedDateTime dateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
             entity.setDate(TimeUtils.parseDay(TimeUtils.getDaysBetween(today, dateTime)));
             entity.setAmPm(TimeUtils.getAmPm(dateTime));

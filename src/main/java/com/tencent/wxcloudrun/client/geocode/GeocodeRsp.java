@@ -1,9 +1,8 @@
-package com.tencent.wxcloudrun.client.amap.geocode;
+package com.tencent.wxcloudrun.client.geocode;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 /**
  * @author zhangyichuan

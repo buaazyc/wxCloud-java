@@ -1,93 +1,109 @@
 package com.tencent.wxcloudrun.entity;
 
-import com.tencent.wxcloudrun.constant.EventEnum;
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Data;
 
 /**
  * @author zhangyichuan
- *     0.001-0.05：微微烧，或者火烧云云况不典型没有预报出来；
- *     0.05~0.2：小烧，大气很通透的情况下才会比较好看；
- *     0.2~0.4：小烧到中等烧；
- *     0.4~0.6：中等烧，比较值得看的火烧云；
- *     0.6~0.8：中等烧到大烧程度的火烧云；
- *     0.8~1.0：不是很完美的大烧火烧云，例如云量没有最高、大气偏污、持续时间偏短、有低云遮挡等；
- *     1.0~1.5：典型的火烧云大烧；
- *     1.5~2.0：优质大烧，火烧云范围广、云量大（不一定满云量）、颜色明亮、持续时间长，且大气通透；
- *     2.0~2.5：世纪大烧，火烧云范围很广、接近满云量、颜色明亮鲜艳、持续时间长，且大气非常通透；
+ * @date 2025/6/5
  */
 @Data
-public class GlowEntity implements Serializable {
-  private String summary;
+public class GlowEntity {
 
-  private String placeHolder;
+  private String address;
 
-  private String aod;
+  private List<SingleGlowEntity> glows;
 
-  private String eventTime;
+  @Data
+  public static class SingleGlowEntity {
 
-  private String quality;
+    /** 今天、明天、后天 */
+    private String date;
 
-  private String status;
+    /** 早上，晚上 */
+    private String amPm;
 
-  private EventEnum event;
+    private Double quality;
 
-  public boolean ok() {
-    return "ok".equals(status);
-  }
+    private Integer qualityLevel;
 
-  public boolean isNotReady() {
-    return "没有该时次的预报".equals(summary);
-  }
+    private Double aod;
 
-  public boolean isBeautiful() {
-    return (getNumQuality() >= 0.4 && getNumAod() < 0.4)
-            || (getNumQuality() >= 0.6 && getNumAod() < 0.5)
-            || getNumQuality() >= 1;
-  }
+    private Integer aodLevel;
 
-  public boolean isBad() {
-    return getNumQuality() < 0.05;
-  }
-
-  public String detailStrFormat() {
-    if (isBad()) {
-      return getEvent().getDesc() + " 不烧\n";
+    public boolean isBad() {
+      return qualityLevel < 1;
     }
-    return getEvent().getDesc()+ "\n"+
-            getFormattedEventTime() +
-            "\n鲜艳度：" + getStrQuality() +
-            "\n污染：" + getStrAod();
-  }
 
-  public String getFormattedEventTime() {
-    return eventTime.replace("<br>", " ");
-  }
-
-  public Double getNumQuality() {
-    return Double.parseDouble(quality.substring(0, quality.indexOf("<br>")));
-  }
-
-  public String getStrQuality() {
-    String num = String.format("%.2f", getNumQuality());
-    String str = quality.split("<br>")[1].replace("\n", "");
-    if (isBeautiful()) {
-      return  num + str +"!!!";
+    public boolean isBeautiful() {
+      return qualityLevel >= 4;
     }
-    return num + str;
-  }
-  
-  public Double getNumAod() {
-    return Double.parseDouble(aod.substring(0, aod.indexOf("<br>")));
-  }
-  
-  public String getStrAod() {
-    return String.format("%.2f", getNumAod()) + aod.split("<br>")[1].replace("\n", "");
+
+    public boolean isArriving() {
+      return "今天".equals(date) || ("明天".equals(date) && "早上".equals(amPm));
+    }
+
+    public String format() {
+      String res = "";
+      if (isBad()) {
+        res = date + "-" + amPm + " 不烧";
+      } else {
+        res =
+            date
+                + "-"
+                + amPm
+                + "\n鲜艳度："
+                + quality
+                + "\n等级："
+                + qualityLevel
+                + "【"
+                + qualityLevelFormat(qualityLevel)
+                + "】";
+      }
+      return res + "\n---------------------------";
+    }
   }
 
-  public String getFormattedSummary() {
-    String cleanText = summary.replace("&ensp;", "").replace("<b>", "").replace("</b>", "");
-    // 按】分割并获取第一部分,加上】
-    return cleanText.split("】")[0] + "】";
+  private static Map<Integer, String> qualityLevelMap =
+      new HashMap<Integer, String>() {
+        {
+          put(0, "不烧");
+          put(1, "微微烧");
+          put(2, "小烧");
+          put(3, "小烧到中烧");
+          put(4, "中烧");
+          put(5, "中烧到大烧");
+          put(6, "大烧");
+          put(7, "优质大烧");
+          put(8, "超级大烧");
+          put(9, "世纪大烧");
+        }
+      };
+
+  private static String qualityLevelFormat(Integer qualityLevel) {
+    return qualityLevelMap.get(qualityLevel);
+  }
+
+  public String messageFormat() {
+    StringBuilder res = new StringBuilder("【" + address + "】火烧云预测：");
+    for (SingleGlowEntity glow : glows) {
+      res.append("\n").append(glow.format());
+    }
+    return res.toString();
+  }
+
+  public String emailFormatWithFilter() {
+    StringBuilder res = new StringBuilder();
+    for (SingleGlowEntity glow : glows) {
+      if (glow.isBeautiful() && glow.isArriving()) {
+        res.append(glow.format());
+      }
+    }
+    if ("".contentEquals(res)) {
+      return "";
+    }
+    return "【" + address + "】：\n" + res;
   }
 }

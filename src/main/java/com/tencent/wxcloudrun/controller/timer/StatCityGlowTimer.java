@@ -1,12 +1,12 @@
 package com.tencent.wxcloudrun.controller.timer;
 
-import com.tencent.wxcloudrun.client.amap.geocode.GeocodeRsp;
-import com.tencent.wxcloudrun.client.amap.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.email.EmailService;
-import com.tencent.wxcloudrun.client.geovisearth.glow.NewGlowService;
+import com.tencent.wxcloudrun.client.geocode.GeocodeRsp;
+import com.tencent.wxcloudrun.client.geocode.GeocodeService;
+import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.entity.NewGlowEntity;
+import com.tencent.wxcloudrun.entity.GlowEntity;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class StatCityGlowTimer {
 
   private final GeocodeService geocodeService;
 
-  private final NewGlowService newGlowService;
+  private final GlowService glowService;
 
   @PostConstruct
   public void runOnceOnStartup() {
@@ -56,7 +56,7 @@ public class StatCityGlowTimer {
       }
 
       GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(city);
-      NewGlowEntity glow = newGlowService.queryGlow(geocodeRsp.getLocation());
+      GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
       glow.setAddress(geocodeRsp.getFormattedAddress());
       String glowRes = glow.emailFormatWithFilter();
 

@@ -1,22 +1,17 @@
-package com.tencent.wxcloudrun.client.geovisearth.glow;
+package com.tencent.wxcloudrun.client.glow;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.entity.GlowEntity;
-import com.tencent.wxcloudrun.entity.NewGlowEntity;
 import com.tencent.wxcloudrun.time.HttpUtils;
 import com.tencent.wxcloudrun.time.TimeUtils;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangyichuan
@@ -25,16 +20,16 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class NewGlowService {
+public class GlowService {
     @Autowired
     private RestTemplate restTemplate;
 
     /** 缓存1h */
-    private final Cache<String, NewGlowEntity> cache =
+    private final Cache<String, GlowEntity> cache =
             Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build();
 
-    public NewGlowEntity queryGlow(String location) {
-        NewGlowEntity rspInCache = cache.getIfPresent(location);
+    public GlowEntity queryGlow(String location) {
+        GlowEntity rspInCache = cache.getIfPresent(location);
         if (rspInCache != null) {
             log.info("queryGlow cache hit, location = {}, rspInCache = {}", location, rspInCache);
             return rspInCache;
@@ -42,23 +37,23 @@ public class NewGlowService {
         log.info("queryGlow cache miss, location = {}", location);
         String start = TimeUtils.getDay(0)+"00";
         String end = TimeUtils.getDay(3)+"23";
-        String url = new NewGlowReq(location, start, end).genUrl();
+        String url = new GlowReq(location, start, end).genUrl();
         log.info("queryGlow url: {}", url);
-        ResponseEntity<NewGlowRsp> glowServiceRsp =
-                restTemplate.exchange(url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), NewGlowRsp.class);
+        ResponseEntity<GlowRsp> glowServiceRsp =
+                restTemplate.exchange(url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), GlowRsp.class);
         log.info("Status Code: {}", glowServiceRsp.getStatusCodeValue());
-        NewGlowRsp glowServiceRspBody = glowServiceRsp.getBody();
+        GlowRsp glowServiceRspBody = glowServiceRsp.getBody();
         if (glowServiceRspBody == null) {
             log.error("glowServiceRspBody is null");
-            return new NewGlowEntity();
+            return new GlowEntity();
         }
         if (!glowServiceRspBody.ok()) {
             log.error("glow query error, address = {}, rsp = {}", location, glowServiceRspBody);
-            return new NewGlowEntity();
+            return new GlowEntity();
         }
         log.info("glowServiceRspBody: {}", glowServiceRspBody);
-        NewGlowEntity entity = glowServiceRspBody.rspToEntity();
-        log.info("NewGlowEntity: {}", entity);
+        GlowEntity entity = glowServiceRspBody.rspToEntity();
+        log.info("GlowEntity: {}", entity);
         cache.put(location, entity);
         return entity;
     }
