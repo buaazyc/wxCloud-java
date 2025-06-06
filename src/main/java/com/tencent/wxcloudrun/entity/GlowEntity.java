@@ -57,15 +57,11 @@ public class GlowEntity {
                 + amPm
                 + "\n火烧云质量："
                 + quality
-                + "\n等级："
-                + qualityLevel
                 + "【"
                 + qualityLevelFormat(qualityLevel)
                 + "】"
-                + "\n污染指数: "
+                + "\n空气污染: "
                 + aod
-                + "\n等级："
-                + aodLevel
                 + "【"
                 + aodLevelFormat(aodLevel)
                 + "】";
@@ -94,8 +90,8 @@ public class GlowEntity {
       new HashMap<Integer, String>() {
         {
           put(1, "重度雾霾");
-          put(2, "雾霾");
-          put(3, "阴");
+          put(2, "轻度雾霾");
+          put(3, "雾霾");
           put(4, "普通");
           put(5, "蓝天");
           put(6, "水晶天");
