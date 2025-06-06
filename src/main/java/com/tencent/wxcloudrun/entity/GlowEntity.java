@@ -25,6 +25,7 @@ public class GlowEntity {
     /** 早上，晚上 */
     private String amPm;
 
+    // 等级说明：https://datacloud.geovisearth.com/support/meteorological/flameCloudForecast
     private Double quality;
 
     private Integer qualityLevel;
@@ -54,12 +55,19 @@ public class GlowEntity {
             date
                 + "-"
                 + amPm
-                + "\n鲜艳度："
+                + "\n火烧云质量："
                 + quality
                 + "\n等级："
                 + qualityLevel
                 + "【"
                 + qualityLevelFormat(qualityLevel)
+                + "】"
+                + "\n污染指数: "
+                + aod
+                + "\n等级："
+                + aodLevel
+                + "【"
+                + aodLevelFormat(aodLevel)
                 + "】";
       }
       return res + "\n---------------------------";
@@ -69,21 +77,34 @@ public class GlowEntity {
   private static Map<Integer, String> qualityLevelMap =
       new HashMap<Integer, String>() {
         {
-          put(0, "不烧");
-          put(1, "微微烧");
+          put(0, "无");
+          put(1, "微烧");
           put(2, "小烧");
-          put(3, "小烧到中烧");
-          put(4, "中烧");
-          put(5, "中烧到大烧");
-          put(6, "大烧");
-          put(7, "优质大烧");
-          put(8, "超级大烧");
-          put(9, "世纪大烧");
+          put(3, "中烧");
+          put(4, "大烧");
+          put(5, "世纪大烧");
         }
       };
 
   private static String qualityLevelFormat(Integer qualityLevel) {
     return qualityLevelMap.get(qualityLevel);
+  }
+
+  private static Map<Integer, String> aodLevelMap =
+      new HashMap<Integer, String>() {
+        {
+          put(1, "重度雾霾");
+          put(2, "雾霾");
+          put(3, "阴");
+          put(4, "普通");
+          put(5, "蓝天");
+          put(6, "水晶天");
+          put(7, "高级水晶天");
+        }
+      };
+
+  private static String aodLevelFormat(Integer aodLevel) {
+    return aodLevelMap.get(aodLevel);
   }
 
   public String messageFormat() {
