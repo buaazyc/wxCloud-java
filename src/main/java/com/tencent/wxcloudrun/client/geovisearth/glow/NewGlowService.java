@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.entity.GlowEntity;
 import com.tencent.wxcloudrun.entity.NewGlowEntity;
+import com.tencent.wxcloudrun.time.HttpUtils;
 import com.tencent.wxcloudrun.time.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class NewGlowService {
         String url = new NewGlowReq(location, start, end).genUrl();
         log.info("queryGlow url: {}", url);
         ResponseEntity<NewGlowRsp> glowServiceRsp =
-                restTemplate.exchange(url, HttpMethod.GET, getStringHttpEntity(), NewGlowRsp.class);
+                restTemplate.exchange(url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), NewGlowRsp.class);
         log.info("Status Code: {}", glowServiceRsp.getStatusCodeValue());
         NewGlowRsp glowServiceRspBody = glowServiceRsp.getBody();
         if (glowServiceRspBody == null) {
@@ -60,26 +61,5 @@ public class NewGlowService {
         log.info("NewGlowEntity: {}", entity);
         cache.put(location, entity);
         return entity;
-    }
-
-
-    private static HttpEntity<String> getStringHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        // 模拟Chrome浏览器（基于macOS）
-        headers.set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36");
-        headers.set("Accept", "*/*");
-        headers.set("Accept-Language", "zh-CN,zh;q=0.9");
-        headers.set("Accept-Encoding", "gzip, deflate, br, zstd");
-        headers.set("Sec-Ch-Ua", "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"");
-        headers.set("Sec-Ch-Ua-Mobile", "?0");
-        headers.set("Sec-Ch-Ua-Platform", "\"macOS\"");
-        headers.set("Sec-Fetch-Dest", "empty");
-        headers.set("Sec-Fetch-Mode", "cors");
-        headers.set("Sec-Fetch-Site", "same-origin");
-        headers.set("X-Requested-With", "XMLHttpRequest");
-        headers.set("Connection", "keep-alive");
-        headers.set("Priority", "u=1, i");
-        // 创建带请求头的请求实体
-        return new HttpEntity<>(headers);
     }
 }

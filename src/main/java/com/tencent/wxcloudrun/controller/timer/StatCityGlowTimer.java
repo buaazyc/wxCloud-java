@@ -4,22 +4,15 @@ import com.tencent.wxcloudrun.client.amap.geocode.GeocodeRsp;
 import com.tencent.wxcloudrun.client.amap.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.geovisearth.glow.NewGlowService;
-import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.entity.GlowEntity;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
-
 import com.tencent.wxcloudrun.entity.NewGlowEntity;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * @author zhangyichuan
@@ -32,8 +25,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class StatCityGlowTimer {
   private final AccessMapper accessMapper;
 
-  private final GlowService glowService;
-
   private final EmailService emailService;
 
   private final AliService aliService;
@@ -44,35 +35,37 @@ public class StatCityGlowTimer {
 
   @PostConstruct
   public void runOnceOnStartup() {
-//    tmp();
+    checkBeautifulGlowWithEmail();
   }
-  /**
-   * 定时统计火烧云情况，并发送邮件
-   */
+
+  /** 定时统计火烧云情况，并发送邮件 */
   @Scheduled(cron = "0 12 12 * * *", zone = "Asia/Shanghai")
   public void dayCronTask() {
-//    checkBeautifulGlowWithEmail();
+    checkBeautifulGlowWithEmail();
   }
 
   public void checkBeautifulGlowWithEmail() {
     StringBuilder subject = new StringBuilder();
     for (String city : accessMapper.getCityList()) {
       // 查询火烧云情况
-      // 保护接口，每个城市查询后休眠1秒
+      // 保护接口，每个城市查询后休眠2秒
       try {
-        Thread.sleep(1000);
+        Thread.sleep(2000);
       } catch (InterruptedException e) {
         log.error("sleep error", e);
       }
-      // 增加过滤
-      ArrayList<GlowEntity> glows = glowService.queryGlowWithFilter(city ,true);
-      String glowRes = glowService.formatGlowStrRes(glows);
+
+      GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(city);
+      NewGlowEntity glow = newGlowService.queryGlow(geocodeRsp.getLocation());
+      glow.setAddress(geocodeRsp.getFormattedAddress());
+      String glowRes = glow.emailFormatWithFilter();
+
       if ("".equals(glowRes)) {
         continue;
       }
       // 满足过滤条件后，则为优质火烧云，发送邮件推送到管理员
       log.info("city is {}, glowRes is beautiful {}", city, glowRes);
-      subject.append(glowRes).append("-----------------------------------------").append("\n");
+      subject.append(glowRes).append("---------------").append("\n");
     }
     if (subject.length() == 0) {
       log.info("no beautiful glow");
@@ -80,21 +73,5 @@ public class StatCityGlowTimer {
     }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
     log.info("statCityGlow end stat res = {}", subject);
-  }
-
-  private void tmp() {
-    for (String city : accessMapper.getCityList()) {
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        log.error("sleep error", e);
-      }
-      city = "北京市朝阳区";
-      GeocodeRsp geocodeRsp = geocodeService.queryGeocodeWithCache(city);
-      NewGlowEntity entity = newGlowService.queryGlow(geocodeRsp.getLocation());
-      entity.setAddress(geocodeRsp.getFormattedAddress());
-      log.info(entity.format());
-      break;
-    }
   }
 }
