@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.entity;
 
+import com.tencent.wxcloudrun.client.solar.SolarRsp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,13 @@ public class GlowEntity {
 
   @Data
   public static class SingleGlowEntity {
-
-    /** 今天、明天、后天 */
     private String date;
 
-    /** 早上，晚上 */
-    private String amPm;
+    /** 今天、明天、后天 */
+    private String dateName;
+
+    /** 上午，下午 */
+    private String amPmName;
 
     // 等级说明：https://datacloud.geovisearth.com/support/meteorological/flameCloudForecast
     private Double quality;
@@ -34,6 +36,9 @@ public class GlowEntity {
 
     private Integer aodLevel;
 
+    /** 日出日落时间 */
+    private String sunTime;
+
     public boolean isBad() {
       return qualityLevel <= 0;
     }
@@ -43,18 +48,20 @@ public class GlowEntity {
     }
 
     public boolean isArriving() {
-      return "今天".equals(date) || ("明天".equals(date) && "早上".equals(amPm));
+      return "今天".equals(dateName) || ("明天".equals(dateName) && "上午".equals(amPmName));
     }
 
     public String format() {
       String res = "";
       if (isBad()) {
-        res = date + "-" + amPm + " 不烧";
+        res = dateName + "-" + amPmName + " 不烧";
       } else {
         res =
-            date
+            dateName
                 + "-"
-                + amPm
+                + amPmName
+                + " "
+                + sunTime
                 + "\n火烧云质量："
                 + quality
                 + "【"
@@ -104,7 +111,7 @@ public class GlowEntity {
   }
 
   public String messageFormat() {
-    StringBuilder res = new StringBuilder("【" + address + "】火烧云预测：");
+    StringBuilder res = new StringBuilder("【" + address + "】火烧云预测");
     for (SingleGlowEntity glow : glows) {
       res.append("\n").append(glow.format());
     }
@@ -122,5 +129,19 @@ public class GlowEntity {
       return "";
     }
     return "【" + address + "】：\n" + res;
+  }
+
+  public void setSunTime(SolarRsp solar) {
+    for (SingleGlowEntity glow : glows) {
+      for (SolarRsp.DataItem dataItem : solar.getResult().getDataList()) {
+        if (glow.getDate().equals(dataItem.getDate())) {
+          if ("上午".equals(glow.getAmPmName())) {
+            glow.setSunTime(dataItem.getSunrise());
+          } else {
+            glow.setSunTime(dataItem.getSunset());
+          }
+        }
+      }
+    }
   }
 }

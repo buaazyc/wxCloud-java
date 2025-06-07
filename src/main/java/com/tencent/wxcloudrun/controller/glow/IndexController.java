@@ -4,6 +4,8 @@ import com.tencent.wxcloudrun.client.geocode.GeocodeRsp;
 import com.tencent.wxcloudrun.client.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
+import com.tencent.wxcloudrun.client.solar.SolarRsp;
+import com.tencent.wxcloudrun.client.solar.SolarService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dataobject.AccessDO;
@@ -36,8 +38,10 @@ public class IndexController {
 
   private final GeocodeService geocodeService;
 
+  private final SolarService solarService;
+
   /**
-   * 处理微信消息请求 目前依赖三个外部接口和一个本地接口：
+   * 处理微信消息请求 依赖接口：
    *
    * <p>1. 阿里云qwen接口：解析城市
    *
@@ -46,6 +50,8 @@ public class IndexController {
    * <p>3. 地理云接口：查询火烧云情况
    *
    * <p>4. mysql：记录访问日志
+   *
+   * <p>5. 地理云接口：查询日出日落
    *
    * @param req 微信请求参数
    * @return 响应消息
@@ -68,6 +74,8 @@ public class IndexController {
 
     GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
     GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
+    SolarRsp solar = solarService.querySolar(geocodeRsp.getLocation());
+    glow.setSunTime(solar);
     glow.setAddress(geocodeRsp.getFormattedAddress());
     String content = glow.messageFormat();
 
