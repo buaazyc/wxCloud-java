@@ -43,6 +43,10 @@ public class GlowEntity {
       return qualityLevel <= 0;
     }
 
+    public boolean isNoData() {
+      return quality > 999;
+    }
+
     public boolean isBeautiful() {
       return qualityLevel >= 4;
     }
@@ -143,5 +147,14 @@ public class GlowEntity {
         }
       }
     }
+  }
+
+  public boolean isNoData() {
+    for (SingleGlowEntity glow : glows) {
+      if (glow.isNoData()) {
+        return true;
+      }
+    }
+    return false;
   }
 }
