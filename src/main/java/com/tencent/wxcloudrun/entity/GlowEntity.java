@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhangyichuan
  * @date 2025/6/5
  */
 @Data
+@Slf4j
 public class GlowEntity {
 
   private String address;
@@ -94,7 +96,12 @@ public class GlowEntity {
       };
 
   private static String qualityLevelFormat(Integer qualityLevel) {
-    return qualityLevelMap.get(qualityLevel);
+    String res = qualityLevelMap.get(qualityLevel);
+    if (res == null) {
+      log.error("qualityLevel not found, qualityLevel = {}", qualityLevel);
+      return "世纪大烧";
+    }
+    return res;
   }
 
   private static Map<Integer, String> aodLevelMap =
@@ -111,7 +118,12 @@ public class GlowEntity {
       };
 
   private static String aodLevelFormat(Integer aodLevel) {
-    return aodLevelMap.get(aodLevel);
+    String res = aodLevelMap.get(aodLevel);
+    if (res == null) {
+      log.error("aodLevel not found, aodLevel = {}", aodLevel);
+      return "高级水晶天";
+    }
+    return res;
   }
 
   public String messageFormat() {
