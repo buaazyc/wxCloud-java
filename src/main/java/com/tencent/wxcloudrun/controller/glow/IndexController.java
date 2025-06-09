@@ -1,15 +1,10 @@
 package com.tencent.wxcloudrun.controller.glow;
 
-import com.tencent.wxcloudrun.client.geocode.GeocodeRsp;
-import com.tencent.wxcloudrun.client.geocode.GeocodeService;
-import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.qwen.AliService;
-import com.tencent.wxcloudrun.client.solar.SolarRsp;
-import com.tencent.wxcloudrun.client.solar.SolarService;
 import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.dataobject.AccessDO;
-import com.tencent.wxcloudrun.entity.GlowEntity;
+import com.tencent.wxcloudrun.manager.GlowManager;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 import java.util.Map;
@@ -32,13 +27,9 @@ public class IndexController {
 
   private final AccessMapper accessMapper;
 
-  private final GlowService glowService;
-
   private final AliService aliService;
 
-  private final GeocodeService geocodeService;
-
-  private final SolarService solarService;
+  private final GlowManager glowManager;
 
   /**
    * 处理微信消息请求 依赖接口：
@@ -72,12 +63,7 @@ public class IndexController {
         city,
         System.currentTimeMillis() - startTime);
 
-    GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
-    GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
-    SolarRsp solar = solarService.querySolar(geocodeRsp.getLocation());
-    glow.setSunTime(solar);
-    glow.setAddress(geocodeRsp.getFormattedAddress());
-    String content = glow.messageFormat();
+    String content = glowManager.getGlow(city, false);
 
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());

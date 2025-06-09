@@ -1,13 +1,8 @@
 package com.tencent.wxcloudrun.controller.timer;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
-import com.tencent.wxcloudrun.client.geocode.GeocodeRsp;
-import com.tencent.wxcloudrun.client.geocode.GeocodeService;
-import com.tencent.wxcloudrun.client.glow.GlowService;
-import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.dataobject.AccessDO;
-import com.tencent.wxcloudrun.entity.GlowEntity;
+import com.tencent.wxcloudrun.manager.GlowManager;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +23,11 @@ public class StatCityGlowTimer {
 
   private final EmailService emailService;
 
-  private final AliService aliService;
-
-  private final GeocodeService geocodeService;
-
-  private final GlowService glowService;
+  private final GlowManager glowManager;
 
   @PostConstruct
   public void runOnceOnStartup() {
-    //    checkBeautifulGlowWithEmail();
+    checkBeautifulGlowWithEmail();
   }
 
   /** 定时统计火烧云情况，并发送邮件 */
@@ -56,17 +47,14 @@ public class StatCityGlowTimer {
         log.error("sleep error", e);
       }
 
-      GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
-      GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
-      glow.setAddress(geocodeRsp.getFormattedAddress());
-      String glowRes = glow.emailFormatWithFilter();
+      String content = glowManager.getGlow(city, true);
 
-      if ("".equals(glowRes)) {
+      if ("".equals(content)) {
         continue;
       }
       // 满足过滤条件后，则为优质火烧云，发送邮件推送到管理员
-      log.info("city is {}, glowRes is beautiful {}", city, glowRes);
-      subject.append(glowRes).append("---------------").append("\n");
+      log.info("city is {}, glowRes is beautiful {}", city, content);
+      subject.append(content).append("---------------").append("\n");
     }
     if (subject.length() == 0) {
       log.info("no beautiful glow");
@@ -74,21 +62,5 @@ public class StatCityGlowTimer {
     }
     emailService.sendEmail(System.getenv("EMAIL_TO"), "火烧云情况", subject.toString());
     log.info("statCityGlow end stat res = {}", subject);
-  }
-
-  public void checkNewLlm() {
-    for (AccessDO accessDO : accessMapper.getLastAccesses()) {
-      String newCity = aliService.parseCity(accessDO.getReq());
-      GeocodeRsp geocodeRsp = geocodeService.queryGeocode(newCity);
-      if (!newCity.contentEquals(geocodeRsp.getFormattedAddress())) {
-        log.error(
-            "content = {} new = {} old = {} location = {} formattedAddress = {}",
-            accessDO.getReq(),
-            newCity,
-            accessDO.getAccessKey(),
-            geocodeRsp.getLocation(),
-            geocodeRsp.getFormattedAddress());
-      }
-    }
   }
 }

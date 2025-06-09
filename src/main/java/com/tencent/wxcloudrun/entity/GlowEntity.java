@@ -50,7 +50,7 @@ public class GlowEntity {
     }
 
     public boolean isBeautiful() {
-      return qualityLevel >= 4;
+      return qualityLevel >= 3;
     }
 
     public boolean isArriving() {
@@ -164,6 +164,7 @@ public class GlowEntity {
   public boolean isNoData() {
     for (SingleGlowEntity glow : glows) {
       if (glow.isNoData()) {
+        log.error("glow is no data, address = {}, rsp = {}", address, glow);
         return true;
       }
     }
