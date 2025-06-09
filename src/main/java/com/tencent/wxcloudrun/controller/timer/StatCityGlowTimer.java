@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.timer;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
+import com.tencent.wxcloudrun.constant.Constants;
 import com.tencent.wxcloudrun.dao.AccessMapper;
 import com.tencent.wxcloudrun.manager.GlowManager;
 import javax.annotation.PostConstruct;
@@ -27,7 +28,10 @@ public class StatCityGlowTimer {
 
   @PostConstruct
   public void runOnceOnStartup() {
-    checkBeautifulGlowWithEmail();
+    // 测试环境，立即执行
+    if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
+      checkBeautifulGlowWithEmail();
+    }
   }
 
   /** 定时统计火烧云情况，并发送邮件 */

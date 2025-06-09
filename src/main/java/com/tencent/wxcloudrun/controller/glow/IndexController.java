@@ -75,7 +75,7 @@ public class IndexController {
         System.currentTimeMillis() - startTime);
 
     // 记录访问日志
-    if (!Constants.TEST_MSG_ID.equals(req.getMsgId())) {
+    if (!Constants.TEST.equals(req.getMsgId())) {
       accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
     }
     log.info("accessMapper insertAccess cost= {}", (System.currentTimeMillis() - startTime));

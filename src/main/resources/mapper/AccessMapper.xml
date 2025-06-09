@@ -41,7 +41,8 @@
     <select id="getCityList" resultType="String">
         SELECT access_key
         FROM t_access_record
-        WHERE length(rsp) > 0 AND create_time > UNIX_TIMESTAMP(now()) - 2851200 and length(access_key) > 0
-        GROUP BY access_key;
+        WHERE length(rsp) > 0 AND create_time > UNIX_TIMESTAMP(now()) - 2851200 AND length(access_key) > 0
+        GROUP BY access_key
+        HAVING count(*) > 1;
     </select>
 </mapper>
