@@ -50,6 +50,7 @@ public class AliService {
           inputContent,
           res,
           System.currentTimeMillis() - startTime);
+      cache.put(inputContent, res);
       return res;
     }
     log.info("parseCity cache miss, content = {}", inputContent);

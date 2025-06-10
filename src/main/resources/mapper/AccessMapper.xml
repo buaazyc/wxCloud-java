@@ -38,7 +38,6 @@
         FROM t_access_record
         WHERE length(rsp) > 0 AND create_time > UNIX_TIMESTAMP(now()) - 2851200 AND
         length(access_key) > 0 AND req = #{req}
-        ORDER BY create_time DESC
         Limit 1;
     </select>
 </mapper>

@@ -1,6 +1,5 @@
 package com.tencent.wxcloudrun.manager;
 
-import com.tencent.wxcloudrun.client.geocode.GeocodeRsp;
 import com.tencent.wxcloudrun.client.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.solar.SolarRsp;
@@ -25,11 +24,11 @@ public class GlowManager {
   private final SolarService solarService;
 
   public String getGlow(String city, boolean filter) {
-    GeocodeRsp geocodeRsp = geocodeService.queryGeocode(city);
-    GlowEntity glow = glowService.queryGlow(geocodeRsp.getLocation());
-    SolarRsp solar = solarService.querySolar(geocodeRsp.getLocation());
+    String location = geocodeService.queryGeocode(city);
+    GlowEntity glow = glowService.queryGlow(location);
+    SolarRsp solar = solarService.querySolar(location);
     glow.setSunTime(solar);
-    glow.setAddress(geocodeRsp.getFormattedAddress());
+    glow.setAddress(city);
     if (filter) {
       return glow.emailFormatWithFilter();
     }
