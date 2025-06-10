@@ -77,7 +77,13 @@ public class IndexController {
     }
 
     // 统计耗时，打印结果
-    log.info("rsp = {}, cost= {}ms ", rsp, System.currentTimeMillis() - startTime);
+    Long cost = System.currentTimeMillis() - startTime;
+    if (cost > Constants.TIME_OUT) {
+      log.error("cost= {}ms , rsp = {}", cost, rsp);
+    } else {
+      log.info("cost= {}ms , rsp = {}", cost, rsp);
+    }
+
     return rsp;
   }
 }
