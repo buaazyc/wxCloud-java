@@ -10,6 +10,7 @@ import com.tencent.wxcloudrun.provider.WxResponse;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -54,6 +55,7 @@ public class IndexController {
     if (req == null || req.getContent() == null) {
       return rsp;
     }
+    MDC.put("traceid", req.getMsgId());
     log.info("create req={}", req);
 
     String city = aliService.parseCity(req.getContent());

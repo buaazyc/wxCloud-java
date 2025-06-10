@@ -30,7 +30,7 @@ public class StatCityGlowTimer {
   public void runOnceOnStartup() {
     // 测试环境，立即执行
     if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
-      checkBeautifulGlowWithEmail();
+      //      checkBeautifulGlowWithEmail();
     }
   }
 

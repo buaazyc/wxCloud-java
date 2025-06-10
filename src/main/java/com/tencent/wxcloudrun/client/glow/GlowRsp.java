@@ -7,11 +7,13 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhangyichuan
  * @date 2025/6/5
  */
+@Slf4j
 @Data
 public class GlowRsp {
 
@@ -79,13 +81,15 @@ public class GlowRsp {
   public GlowEntity rspToEntity() {
     GlowEntity res = new GlowEntity();
     res.setGlows(new ArrayList<>());
-    ZonedDateTime today = TimeUtils.today();
+    ZonedDateTime nowDataTime = TimeUtils.today();
+    log.info("nowDataTime = {}", nowDataTime);
     for (DataItem dataItem : result.getDataList()) {
       GlowEntity.SingleGlowEntity entity = new GlowEntity.SingleGlowEntity();
-      ZonedDateTime dateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
-      entity.setDate(dateTime.toLocalDate().toString());
-      entity.setDateName(TimeUtils.parseDay(TimeUtils.getDaysBetween(today, dateTime)));
-      entity.setAmPmName(TimeUtils.getAmPm(dateTime));
+      ZonedDateTime parseDateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
+      log.info("parseDateTime = {}", parseDateTime);
+      entity.setDate(parseDateTime.toLocalDate().toString());
+      entity.setDateName(TimeUtils.parseDay(TimeUtils.getDaysBetween(nowDataTime, parseDateTime)));
+      entity.setAmPmName(TimeUtils.getAmPm(parseDateTime));
 
       entity.setAod(dataItem.getValues().get(0));
       entity.setAodLevel(dataItem.getLevels().get(0));
