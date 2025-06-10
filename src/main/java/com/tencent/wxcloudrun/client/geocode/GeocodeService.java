@@ -25,15 +25,19 @@ public class GeocodeService {
       Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
   public GeocodeRsp queryGeocode(String address) {
+    long startTime = System.currentTimeMillis();
     GeocodeRsp rspInCache = cache.getIfPresent(address);
     if (rspInCache != null) {
-      log.info("queryGeocode cache hit, address = {}, rspInCache = {}", address, rspInCache);
+      log.info(
+          "queryGeocode cache hit, address = {}, rspInCache = {}, cost = {}ms",
+          address,
+          rspInCache,
+          System.currentTimeMillis() - startTime);
       return rspInCache;
     }
-    log.info("queryGeocode cache miss, address = {}", address);
+    String url = new GeocodeReq(address).genUrl();
+    log.info("queryGeocode cache miss, address = {}, url = {}", address, url);
     try {
-      String url = new GeocodeReq(address).genUrl();
-      log.info("queryGeocode url: {}", url);
       ResponseEntity<GeocodeRsp> rsp =
           restTemplate.exchange(
               url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), GeocodeRsp.class);
@@ -46,7 +50,11 @@ public class GeocodeService {
         log.error("queryGeocode error, address = {}, rsp = {}", address, rspBody);
         return null;
       }
-      log.info("queryGeocode {} get rspBody: {}", address, rspBody);
+      log.info(
+          "queryGeocode address = {}, rspBody = {}, cost = {}ms",
+          address,
+          rspBody,
+          System.currentTimeMillis() - startTime);
       cache.put(address, rspBody);
       return rspBody;
 

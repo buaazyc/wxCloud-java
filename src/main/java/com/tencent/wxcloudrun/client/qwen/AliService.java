@@ -10,8 +10,10 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.tencent.wxcloudrun.dao.AccessMapper;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,18 +23,36 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AliService {
 
   /** 缓存1month */
   private final Cache<String, String> cache =
       Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
-  public String parseCity(String content) {
-    if (cache.getIfPresent(content) != null) {
-      log.info("parseCity cache hit, content = {}, res = {}", content, cache.getIfPresent(content));
-      return cache.getIfPresent(content);
+  private final AccessMapper accessMapper;
+
+  public String parseCity(String inputContent) {
+    long startTime = System.currentTimeMillis();
+    String res = cache.getIfPresent(inputContent);
+    if (res != null) {
+      log.info(
+          "parseCity cache hit, inputContent = {}, res = {}, cost = {}ms",
+          inputContent,
+          res,
+          System.currentTimeMillis() - startTime);
+      return res;
     }
-    log.info("parseCity cache miss, content = {}", content);
+    res = accessMapper.getAccessKey(inputContent);
+    if (res != null) {
+      log.info(
+          "parseCity mysql hit, inputContent = {}, res = {}, cost = {}ms",
+          inputContent,
+          res,
+          System.currentTimeMillis() - startTime);
+      return res;
+    }
+    log.info("parseCity cache miss, content = {}", inputContent);
     String sysContent =
         "你是一个中国地理行政名称的专家，你可以检索高德的知识库"
             + "根据用户输入的内容，判断用户希望检索的地址，并给出该地址所在的或者对应的标准行政名称"
@@ -41,8 +61,13 @@ public class AliService {
             + "如果用户输入未包含区或县一级，输出格式为：xx省xx市，两层结构。"
             + "如果用户输入只到省一级，输出格式为：xx省，一层结构。"
             + "只输出最终的结果，不需要输出其他任何多余的文字。";
-    String res = callWithMessage(sysContent, content);
-    cache.put(content, res);
+    res = callWithMessage(sysContent, inputContent);
+    cache.put(inputContent, res);
+    log.info(
+        "parseCity inputContent = {}, res = {}, cost = {}ms",
+        inputContent,
+        res,
+        System.currentTimeMillis() - startTime);
     return res;
   }
 

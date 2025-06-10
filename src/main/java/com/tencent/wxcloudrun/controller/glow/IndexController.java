@@ -45,25 +45,22 @@ public class IndexController {
    *
    * <p>5. 地理云接口：查询日出日落
    *
+   * <p>响应时间必须控制在5s以内
+   *
    * @param req 微信请求参数
    * @return 响应消息
    */
   @PostMapping("/index")
-  public WxResponse create(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
+  public WxResponse index(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
     long startTime = System.currentTimeMillis();
     WxResponse rsp = new WxResponse();
     if (req == null || req.getContent() == null) {
       return rsp;
     }
     MDC.put("traceid", req.getMsgId());
-    log.info("create req={}", req);
+    log.info("req={}", req);
 
     String city = aliService.parseCity(req.getContent());
-    log.info(
-        "aliService parseCity content = {} city = {} cost = {}",
-        req.getContent(),
-        city,
-        System.currentTimeMillis() - startTime);
 
     String content = glowManager.getGlow(city, false);
 
@@ -71,13 +68,16 @@ public class IndexController {
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
     rsp.setContent(content);
-    log.info("glowManager getGlow cost = {} rsp = {}", System.currentTimeMillis() - startTime, rsp);
 
     // 记录访问日志
     if (!Constants.TEST.equals(req.getMsgId())) {
+      long startInsetAccess = System.currentTimeMillis();
       accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
+      log.info("insertAccess cost = {}ms", System.currentTimeMillis() - startInsetAccess);
     }
-    log.info("accessMapper insertAccess cost= {}", (System.currentTimeMillis() - startTime));
+
+    // 统计耗时，打印结果
+    log.info("rsp = {}, cost= {}ms ", rsp, System.currentTimeMillis() - startTime);
     return rsp;
   }
 }

@@ -82,7 +82,6 @@ public class GlowRsp {
     GlowEntity res = new GlowEntity();
     res.setGlows(new ArrayList<>());
     ZonedDateTime nowDataTime = TimeUtils.today();
-    log.info("nowDataTime = {}", nowDataTime);
     for (DataItem dataItem : result.getDataList()) {
       GlowEntity.SingleGlowEntity entity = new GlowEntity.SingleGlowEntity();
       ZonedDateTime parseDateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
