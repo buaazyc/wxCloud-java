@@ -138,7 +138,7 @@ public class GlowEntity {
     StringBuilder res = new StringBuilder();
     for (SingleGlowEntity glow : glows) {
       if (glow.isBeautiful() && glow.isArriving()) {
-        res.append(glow.format());
+        res.append("\n").append(glow.format());
       }
     }
     if ("".contentEquals(res)) {

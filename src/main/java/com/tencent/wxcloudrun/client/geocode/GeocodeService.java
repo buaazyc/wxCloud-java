@@ -2,7 +2,7 @@ package com.tencent.wxcloudrun.client.geocode;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.time.HttpUtils;
+import com.tencent.wxcloudrun.utils.HttpUtils;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
