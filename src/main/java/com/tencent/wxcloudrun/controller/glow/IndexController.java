@@ -71,10 +71,7 @@ public class IndexController {
     rsp.setFromUserName(req.getToUserName());
     rsp.setCreateTime(req.getCreateTime());
     rsp.setContent(content);
-    log.info(
-        "glowService queryGlowWithFilter rsp = {} cost = {}",
-        rsp,
-        System.currentTimeMillis() - startTime);
+    log.info("glowManager getGlow cost = {} rsp = {}", System.currentTimeMillis() - startTime, rsp);
 
     // 记录访问日志
     if (!Constants.TEST.equals(req.getMsgId())) {

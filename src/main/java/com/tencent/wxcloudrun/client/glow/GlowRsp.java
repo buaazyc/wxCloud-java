@@ -86,7 +86,6 @@ public class GlowRsp {
     for (DataItem dataItem : result.getDataList()) {
       GlowEntity.SingleGlowEntity entity = new GlowEntity.SingleGlowEntity();
       ZonedDateTime parseDateTime = TimeUtils.parseDateTime(dataItem.getFcTime());
-      log.info("parseDateTime = {}", parseDateTime);
       entity.setDate(parseDateTime.toLocalDate().toString());
       entity.setDateName(TimeUtils.parseDay(TimeUtils.getDaysBetween(nowDataTime, parseDateTime)));
       entity.setAmPmName(TimeUtils.getAmPm(parseDateTime));
