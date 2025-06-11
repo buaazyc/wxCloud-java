@@ -1,7 +1,7 @@
-package com.tencent.wxcloudrun.dataobject;
+package com.tencent.wxcloudrun.dao.dataobject;
 
-import com.tencent.wxcloudrun.provider.WxRequest;
-import com.tencent.wxcloudrun.provider.WxResponse;
+import com.tencent.wxcloudrun.service.provider.WxRequest;
+import com.tencent.wxcloudrun.service.provider.WxResponse;
 import java.io.Serializable;
 import java.util.Map;
 import lombok.Data;

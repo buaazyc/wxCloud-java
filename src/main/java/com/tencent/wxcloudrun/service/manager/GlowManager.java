@@ -1,10 +1,10 @@
-package com.tencent.wxcloudrun.manager;
+package com.tencent.wxcloudrun.service.manager;
 
 import com.tencent.wxcloudrun.client.geocode.GeocodeService;
 import com.tencent.wxcloudrun.client.glow.GlowService;
 import com.tencent.wxcloudrun.client.solar.SolarRsp;
 import com.tencent.wxcloudrun.client.solar.SolarService;
-import com.tencent.wxcloudrun.entity.GlowEntity;
+import com.tencent.wxcloudrun.domain.entity.GlowEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.entity;
+package com.tencent.wxcloudrun.domain.entity;
 
 import com.tencent.wxcloudrun.client.solar.SolarRsp;
 import java.util.HashMap;

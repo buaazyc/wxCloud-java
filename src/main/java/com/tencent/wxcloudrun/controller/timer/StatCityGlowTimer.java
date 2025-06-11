@@ -1,9 +1,9 @@
 package com.tencent.wxcloudrun.controller.timer;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
-import com.tencent.wxcloudrun.constant.Constants;
-import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.manager.GlowManager;
+import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
+import com.tencent.wxcloudrun.domain.constant.Constants;
+import com.tencent.wxcloudrun.service.manager.GlowManager;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,10 @@ public class StatCityGlowTimer {
   /** 定时统计火烧云情况，并发送邮件 */
   @Scheduled(cron = "0 12 12 * * *", zone = "Asia/Shanghai")
   public void dayCronTask() {
-    checkBeautifulGlowWithEmail();
+    // 测试环境执行，正式环境不跑了，避免量api配额消耗过多
+    if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
+      checkBeautifulGlowWithEmail();
+    }
   }
 
   public void checkBeautifulGlowWithEmail() {

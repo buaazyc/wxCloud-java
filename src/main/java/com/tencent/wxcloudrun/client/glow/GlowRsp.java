@@ -1,8 +1,8 @@
 package com.tencent.wxcloudrun.client.glow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tencent.wxcloudrun.entity.GlowEntity;
-import com.tencent.wxcloudrun.utils.TimeUtils;
+import com.tencent.wxcloudrun.domain.entity.GlowEntity;
+import com.tencent.wxcloudrun.domain.utils.TimeUtils;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

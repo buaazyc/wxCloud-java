@@ -10,7 +10,7 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.dao.AccessMapper;
+import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;

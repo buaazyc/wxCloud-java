@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.dataobject;
+package com.tencent.wxcloudrun.dao.dataobject;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 public class IegUserDO implements Serializable {
 
-    private String userName;
+  private String userName;
 
-    private String email;
+  private String email;
 }

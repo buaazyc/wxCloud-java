@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.utils;
+package com.tencent.wxcloudrun.domain.utils;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

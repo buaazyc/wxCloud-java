@@ -1,6 +1,6 @@
-package com.tencent.wxcloudrun.dao;
+package com.tencent.wxcloudrun.dao.mapper;
 
-import com.tencent.wxcloudrun.dataobject.GeocodeDO;
+import com.tencent.wxcloudrun.dao.dataobject.GeocodeDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

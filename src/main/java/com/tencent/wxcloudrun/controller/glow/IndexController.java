@@ -1,12 +1,12 @@
 package com.tencent.wxcloudrun.controller.glow;
 
 import com.tencent.wxcloudrun.client.qwen.AliService;
-import com.tencent.wxcloudrun.constant.Constants;
-import com.tencent.wxcloudrun.dao.AccessMapper;
-import com.tencent.wxcloudrun.dataobject.AccessDO;
-import com.tencent.wxcloudrun.manager.GlowManager;
-import com.tencent.wxcloudrun.provider.WxRequest;
-import com.tencent.wxcloudrun.provider.WxResponse;
+import com.tencent.wxcloudrun.dao.dataobject.AccessDO;
+import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
+import com.tencent.wxcloudrun.domain.constant.Constants;
+import com.tencent.wxcloudrun.service.manager.GlowManager;
+import com.tencent.wxcloudrun.service.provider.WxRequest;
+import com.tencent.wxcloudrun.service.provider.WxResponse;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

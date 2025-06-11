@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.constant;
+package com.tencent.wxcloudrun.domain.constant;
 
 /**
  * @author zhangyichuan

@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.entity;
+package com.tencent.wxcloudrun.domain.entity;
 
 import java.io.Serializable;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 public class IegEntity implements Serializable {
-    private String receiver;
+  private String receiver;
 
-    private String content;
+  private String content;
 }

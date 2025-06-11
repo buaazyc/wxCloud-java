@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.provider;
+package com.tencent.wxcloudrun.service.provider;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

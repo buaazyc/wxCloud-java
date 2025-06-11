@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.dataobject;
+package com.tencent.wxcloudrun.dao.dataobject;
 
 import java.io.Serializable;
 import lombok.Data;

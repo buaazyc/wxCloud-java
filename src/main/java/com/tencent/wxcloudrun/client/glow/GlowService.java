@@ -2,9 +2,9 @@ package com.tencent.wxcloudrun.client.glow;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.entity.GlowEntity;
-import com.tencent.wxcloudrun.utils.HttpUtils;
-import com.tencent.wxcloudrun.utils.TimeUtils;
+import com.tencent.wxcloudrun.domain.entity.GlowEntity;
+import com.tencent.wxcloudrun.domain.utils.HttpUtils;
+import com.tencent.wxcloudrun.domain.utils.TimeUtils;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

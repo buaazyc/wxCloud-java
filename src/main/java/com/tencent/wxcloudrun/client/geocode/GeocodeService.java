@@ -2,9 +2,9 @@ package com.tencent.wxcloudrun.client.geocode;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.dao.GeocodeMapper;
-import com.tencent.wxcloudrun.dataobject.GeocodeDO;
-import com.tencent.wxcloudrun.utils.HttpUtils;
+import com.tencent.wxcloudrun.dao.dataobject.GeocodeDO;
+import com.tencent.wxcloudrun.dao.mapper.GeocodeMapper;
+import com.tencent.wxcloudrun.domain.utils.HttpUtils;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

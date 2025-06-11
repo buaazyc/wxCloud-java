@@ -1,6 +1,6 @@
-package com.tencent.wxcloudrun.dao;
+package com.tencent.wxcloudrun.dao.mapper;
 
-import com.tencent.wxcloudrun.dataobject.AccessDO;
+import com.tencent.wxcloudrun.dao.dataobject.AccessDO;
 import java.util.ArrayList;
 import org.apache.ibatis.annotations.Mapper;
 
