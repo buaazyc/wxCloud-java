@@ -81,7 +81,10 @@ public class SunGlowService {
     ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
     log.info(
         "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
-    cache.put(address, glows);
+    // 如果glows的长度=EVENTS的长度，则缓存
+    if (glows.size() == EVENTS.length) {
+      cache.put(address, glows);
+    }
     return glows;
   }
 
