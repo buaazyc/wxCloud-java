@@ -78,7 +78,7 @@ public class SunGlowService {
       return cacheGlows;
     }
 
-    ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
+    ArrayList<SunGlowEntity> glows = queryGlow(address);
     log.info(
         "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
     // 如果glows的长度=EVENTS的长度，则缓存
@@ -86,6 +86,44 @@ public class SunGlowService {
       cache.put(address, glows);
     }
     return glows;
+  }
+
+  private ArrayList<SunGlowEntity> queryGlow(String address) {
+    ArrayList<SunGlowEntity> glowArrayList = new ArrayList<>();
+    for (EventEnum event : EVENTS) {
+      long startTime = System.currentTimeMillis();
+      String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
+      // 使用exchange方法发送请求
+      ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
+          restTemplate.exchange(
+              url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
+      SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
+      if (glowServiceRspBody == null) {
+        log.error("queryGlow glowServiceRspBody is null");
+        return new ArrayList<>();
+      }
+      SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
+      glowRsp.setEvent(event);
+      if (!glowRsp.ok()) {
+        log.error(
+            "queryGlow glow query error, address = {}, event = {}, rsp = {}",
+            address,
+            event.getQueryLabel(),
+            glowRsp);
+        continue;
+      }
+      if (glowRsp.isNotReady()) {
+        log.warn(
+            "queryGlow glow query not ready, address = {}, event = {}, rsp = {}",
+            address,
+            event.getQueryLabel(),
+            glowRsp);
+        continue;
+      }
+      glowArrayList.add(glowRsp);
+      log.info("queryGlow cost = {}ms glow: {}", System.currentTimeMillis() - startTime, glowRsp);
+    }
+    return glowArrayList;
   }
 
   private ArrayList<SunGlowEntity> queryGlowWithThread(String address) {
