@@ -96,45 +96,53 @@ public class SunGlowService {
                 MDC.put("traceid", traceId);
                 long startTime = System.currentTimeMillis();
                 String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
-                ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
-                    restTemplate.exchange(
-                        url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
-                SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
-                if (glowServiceRspBody == null) {
-                  log.error("glowServiceRspBody is null");
-                  return null;
-                }
+                try {
+                  ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
+                      restTemplate.exchange(
+                          url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
+                  SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
+                  if (glowServiceRspBody == null) {
+                    log.error("glowServiceRspBody is null");
+                    return null;
+                  }
 
-                SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
-                glowRsp.setEvent(event);
+                  SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
+                  glowRsp.setEvent(event);
 
-                if (!glowRsp.ok()) {
+                  if (!glowRsp.ok()) {
+                    log.error(
+                        "glow query error, address = {}, event = {}, rsp = {}",
+                        address,
+                        event.getQueryLabel(),
+                        glowRsp);
+                    return null;
+                  }
+
+                  if (glowRsp.isNotReady()) {
+                    log.warn(
+                        "glow query not ready, address = {}, event = {}, rsp = {}",
+                        address,
+                        event.getQueryLabel(),
+                        glowRsp);
+                    return null;
+                  }
+
+                  log.info(
+                      "queryGlow cost = {}ms get glow: {}",
+                      System.currentTimeMillis() - startTime,
+                      glowRsp);
+                  return glowRsp;
+                } catch (Exception e) {
                   log.error(
-                      "glow query error, address = {}, event = {}, rsp = {}",
+                      "glow query error, address = {}, event = {}",
                       address,
                       event.getQueryLabel(),
-                      glowRsp);
+                      e);
                   return null;
                 }
-
-                if (glowRsp.isNotReady()) {
-                  log.warn(
-                      "glow query not ready, address = {}, event = {}, rsp = {}",
-                      address,
-                      event.getQueryLabel(),
-                      glowRsp);
-                  return null;
-                }
-
-                log.info(
-                    "queryGlow cost = {}ms get glow: {}",
-                    System.currentTimeMillis() - startTime,
-                    glowRsp);
-                return glowRsp;
               },
               // 使用自定义线程池
               executor);
-
       futures.add(future);
     }
 
