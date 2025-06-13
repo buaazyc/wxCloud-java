@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.concurrent.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +31,8 @@ public class SunGlowService {
   private static final EventEnum[] EVENTS = {
     EventEnum.RISE_1, EventEnum.SUNSET_1, EventEnum.RISE_2, EventEnum.SUNSET_2
   };
+
+  ExecutorService executor = Executors.newFixedThreadPool(10);
 
   /** 缓存59min */
   private final Cache<String, ArrayList<SunGlowEntity>> cache =
@@ -66,52 +70,86 @@ public class SunGlowService {
   }
 
   public ArrayList<SunGlowEntity> queryGlowResWithCache(String address) {
+    long startTime = System.currentTimeMillis();
     ArrayList<SunGlowEntity> cacheGlows = cache.getIfPresent(address);
     if (cacheGlows != null) {
-      log.info("cache hit, address = {}", address);
+      log.info(
+          "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
       return cacheGlows;
     }
-    log.info("cache miss, address = {}", address);
-    ArrayList<SunGlowEntity> glows = queryGlow(address);
+
+    ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
+    log.info(
+        "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
     cache.put(address, glows);
     return glows;
   }
 
-  private ArrayList<SunGlowEntity> queryGlow(String address) {
-    ArrayList<SunGlowEntity> glowArrayList = new ArrayList<>();
+  private ArrayList<SunGlowEntity> queryGlowWithThread(String address) {
+    List<CompletableFuture<SunGlowEntity>> futures = new ArrayList<>();
+    String traceId = MDC.get("traceid");
+
     for (EventEnum event : EVENTS) {
-      String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
-      // 使用exchange方法发送请求
-      ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
-          restTemplate.exchange(
-              url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
-      log.info("Status Code: {}", glowServiceRsp.getStatusCodeValue());
-      log.info("Content-Type: {}", glowServiceRsp.getHeaders().getContentType());
-      SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
-      if (glowServiceRspBody == null) {
-        log.error("glowServiceRspBody is null");
-        return new ArrayList<>();
+      CompletableFuture<SunGlowEntity> future =
+          CompletableFuture.supplyAsync(
+              () -> {
+                MDC.put("traceid", traceId);
+                long startTime = System.currentTimeMillis();
+                String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
+                ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
+                    restTemplate.exchange(
+                        url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
+                SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
+                if (glowServiceRspBody == null) {
+                  log.error("glowServiceRspBody is null");
+                  return null;
+                }
+
+                SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
+                glowRsp.setEvent(event);
+
+                if (!glowRsp.ok()) {
+                  log.error(
+                      "glow query error, address = {}, event = {}, rsp = {}",
+                      address,
+                      event.getQueryLabel(),
+                      glowRsp);
+                  return null;
+                }
+
+                if (glowRsp.isNotReady()) {
+                  log.warn(
+                      "glow query not ready, address = {}, event = {}, rsp = {}",
+                      address,
+                      event.getQueryLabel(),
+                      glowRsp);
+                  return null;
+                }
+
+                log.info(
+                    "queryGlow cost = {}ms get glow: {}",
+                    System.currentTimeMillis() - startTime,
+                    glowRsp);
+                return glowRsp;
+              },
+              // 使用自定义线程池
+              executor);
+
+      futures.add(future);
+    }
+
+    // 等待所有异步任务完成，并收集结果
+    ArrayList<SunGlowEntity> glowArrayList = new ArrayList<>();
+    for (CompletableFuture<SunGlowEntity> future : futures) {
+      try {
+        // 可能抛出 InterruptedException 或 ExecutionException
+        SunGlowEntity result = future.get();
+        if (result != null) {
+          glowArrayList.add(result);
+        }
+      } catch (InterruptedException | ExecutionException e) {
+        log.error("Error occurred while waiting for future result", e);
       }
-      SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
-      glowRsp.setEvent(event);
-      if (!glowRsp.ok()) {
-        log.error(
-            "glow query error, address = {}, event = {}, rsp = {}",
-            address,
-            event.getQueryLabel(),
-            glowRsp);
-        continue;
-      }
-      if (glowRsp.isNotReady()) {
-        log.warn(
-            "glow query not ready, address = {}, event = {}, rsp = {}",
-            address,
-            event.getQueryLabel(),
-            glowRsp);
-        continue;
-      }
-      glowArrayList.add(glowRsp);
-      log.info("queryGlow get glow: {}", glowRsp);
     }
     return glowArrayList;
   }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.CityMapper">
+
+    <insert id="insertCity">
+        INSERT IGNORE INTO t_city (input, city)
+        VALUES (#{input}, #{city});
+    </insert>
+
+    <select id="getCity" resultType="java.lang.String">
+        SELECT city
+        FROM t_city
+        WHERE input = #{input};
+    </select>
+    <select id="getCityList" resultType="java.lang.String">
+        SELECT city
+        FROM t_city
+        GROUP BY city;
+    </select>
+</mapper>

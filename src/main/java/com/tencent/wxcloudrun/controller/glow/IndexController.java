@@ -3,12 +3,16 @@ package com.tencent.wxcloudrun.controller.glow;
 import com.tencent.wxcloudrun.client.qwen.AliService;
 import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.dataobject.AccessDO;
+import com.tencent.wxcloudrun.dao.dataobject.CityDO;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
+import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.service.manager.GlowManager;
 import com.tencent.wxcloudrun.service.provider.WxRequest;
 import com.tencent.wxcloudrun.service.provider.WxResponse;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -27,7 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class IndexController {
 
+  private final ExecutorService executor = Executors.newFixedThreadPool(10);
+
   private final AccessMapper accessMapper;
+
+  private final CityMapper cityMapper;
 
   private final AliService aliService;
 
@@ -60,6 +68,9 @@ public class IndexController {
     if (req == null || req.getContent() == null) {
       return rsp;
     }
+    if (Constants.TEST.equals(req.getMsgId())) {
+      req.setMsgId(req.getMsgId() + "_" + System.currentTimeMillis());
+    }
     MDC.put("traceid", req.getMsgId());
     log.info("req={}", req);
 
@@ -73,13 +84,6 @@ public class IndexController {
     rsp.setCreateTime(req.getCreateTime());
     rsp.setContent(content);
 
-    // 记录访问日志
-    if (!Constants.TEST.equals(req.getMsgId())) {
-      long startInsetAccess = System.currentTimeMillis();
-      accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
-      log.info("insertAccess cost = {}ms", System.currentTimeMillis() - startInsetAccess);
-    }
-
     // 统计耗时，打印结果
     Long cost = System.currentTimeMillis() - startTime;
     if (cost > Constants.TIME_OUT) {
@@ -87,6 +91,24 @@ public class IndexController {
     } else {
       log.info("cost= {}ms , rsp = {}", cost, rsp);
     }
+
+    // 异步执行
+    executor.submit(
+        () -> {
+          MDC.put("traceid", req.getMsgId());
+          long startInsetAccess = System.currentTimeMillis();
+
+          try {
+            // 记录访问记录
+            accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
+            // 记录城市
+            cityMapper.insertCity(new CityDO(req.getContent(), city));
+            log.info("async success cost = {}ms", System.currentTimeMillis() - startInsetAccess);
+          } catch (Exception e) {
+            log.error("insertAccess failed with exception: ", e);
+          }
+        });
+
     return rsp;
   }
 }

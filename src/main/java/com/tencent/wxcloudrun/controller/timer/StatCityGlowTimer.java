@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.controller.timer;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
+import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.service.manager.GlowManager;
 import javax.annotation.PostConstruct;
@@ -29,11 +30,14 @@ public class StatCityGlowTimer {
 
   private final SunGlowService glowService;
 
+  private final CityMapper cityMapper;
+
   @PostConstruct
   public void runOnceOnStartup() {
     // 测试环境，立即执行
     if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
       //      checkBeautifulGlowWithEmail();
+
     }
   }
 
@@ -42,7 +46,7 @@ public class StatCityGlowTimer {
   public void dayCronTask() {
     // 测试环境执行，正式环境不跑了，避免量api配额消耗过多
     if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
-      checkBeautifulGlowWithEmail();
+      //      checkBeautifulGlowWithEmail();
     }
   }
 

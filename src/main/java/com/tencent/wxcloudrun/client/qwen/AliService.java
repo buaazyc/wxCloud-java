@@ -10,7 +10,7 @@ import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
+import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AliService {
   private final Cache<String, String> cache =
       Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
-  private final AccessMapper accessMapper;
+  private final CityMapper cityMapper;
 
   private static final String GLOW_SYS_CONTENT =
       "你是一个中国地理行政名称的专家，你可以检索高德的知识库"
@@ -60,7 +60,7 @@ public class AliService {
           System.currentTimeMillis() - startTime);
       return res;
     }
-    res = accessMapper.getAccessKey(inputContent);
+    res = cityMapper.getCity(inputContent);
     if (res != null) {
       log.info(
           "parseCity mysql hit, inputContent = {}, res = {}, cost = {}ms",
