@@ -25,8 +25,17 @@ public class GlowManager {
 
   public String getGlow(String city, boolean filter) {
     String location = geocodeService.queryGeocode(city);
+    if (location == null) {
+      return "系统错误：未找到该城市信息";
+    }
     GlowEntity glow = glowService.queryGlow(location);
+    if (glow == null) {
+      return "系统错误：未找到该城市火烧云预报";
+    }
     SolarRsp solar = solarService.querySolar(location);
+    if (solar == null) {
+      return "系统错误：未找到该城市日出日落时间";
+    }
     glow.setSunTime(solar);
     glow.setAddress(city);
     if (filter) {

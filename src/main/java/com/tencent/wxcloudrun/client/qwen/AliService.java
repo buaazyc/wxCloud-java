@@ -32,6 +32,27 @@ public class AliService {
 
   private final AccessMapper accessMapper;
 
+  private static final String GLOW_SYS_CONTENT =
+      "你是一个中国地理行政名称的专家，你可以检索高德的知识库"
+          + "根据用户输入的内容，判断用户希望检索的地址，并给出该地址所在的或者对应的标准行政名称"
+          + "输出格式为：xx省xx市xx县/区，三层结构。"
+          + "如果是直辖市，则不需要省一级；"
+          + "如果用户输入未包含区或县一级，输出格式为：xx省xx市，两层结构。"
+          + "如果用户输入只到省一级，输出格式为：xx省，一层结构。"
+          + "只输出最终的结果，不需要输出其他任何多余的文字。";
+
+  private static final String SUN_GLOW_SYS_CONTENT =
+      "你是一个中国地理行政名称的专家，你可以检索高德的知识库"
+          + "根据用户输入的内容，判断用户输入的地址，然后从高德中获取该地址的行政地区"
+          + "然后按照如下要求输出行政地区："
+          + "输出内容为xx省xx市xx县/区中能获取到的最底层级。"
+          + "1. 判断用户检索的地址为河南省，输出为河南，不含省后缀"
+          + "2. 判断用户检索的地址为河南省焦作市，输出为焦作，不含市后缀"
+          + "3. 判断用户检索的地址为河南省焦作市武陟县，输出为武陟县，需要包含县/区后缀"
+          + "只输出最终的结果，不需要输出其他任何多余的文字。"
+          + "例如：用户可能输入一个具体地址，比如大亚湾，你首先需要从高德知识库检索到该地址属于惠州市惠阳区"
+          + "然后按照格式输出：惠阳区";
+
   public String parseCity(String inputContent) {
     long startTime = System.currentTimeMillis();
     String res = cache.getIfPresent(inputContent);
@@ -54,15 +75,8 @@ public class AliService {
       return res;
     }
     log.info("parseCity cache miss, content = {}", inputContent);
-    String sysContent =
-        "你是一个中国地理行政名称的专家，你可以检索高德的知识库"
-            + "根据用户输入的内容，判断用户希望检索的地址，并给出该地址所在的或者对应的标准行政名称"
-            + "输出格式为：xx省xx市xx县/区，三层结构。"
-            + "如果是直辖市，则不需要省一级；"
-            + "如果用户输入未包含区或县一级，输出格式为：xx省xx市，两层结构。"
-            + "如果用户输入只到省一级，输出格式为：xx省，一层结构。"
-            + "只输出最终的结果，不需要输出其他任何多余的文字。";
-    res = callWithMessage(sysContent, inputContent);
+
+    res = callWithMessage(SUN_GLOW_SYS_CONTENT, inputContent);
     cache.put(inputContent, res);
     log.info(
         "parseCity inputContent = {}, res = {}, cost = {}ms",

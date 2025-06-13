@@ -17,6 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class GlowRsp {
 
+  @JsonProperty("code")
+  private int code;
+
+  @JsonProperty("msg")
+  private String msg;
+
   @JsonProperty("status")
   private int status;
 
@@ -75,7 +81,7 @@ public class GlowRsp {
   }
 
   public boolean ok() {
-    return status == 0;
+    return status == 0 && code == 0;
   }
 
   public GlowEntity rspToEntity() {

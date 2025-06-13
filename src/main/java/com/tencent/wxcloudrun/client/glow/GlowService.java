@@ -48,11 +48,11 @@ public class GlowService {
     GlowRsp glowServiceRspBody = glowServiceRsp.getBody();
     if (glowServiceRspBody == null) {
       log.error("glowServiceRspBody is null");
-      return new GlowEntity();
+      return null;
     }
     if (!glowServiceRspBody.ok()) {
       log.error("glow query error, address = {}, rsp = {}", location, glowServiceRspBody);
-      return new GlowEntity();
+      return null;
     }
     log.info(
         "glowServiceRspBody: {}, cost = {}ms",
@@ -61,7 +61,7 @@ public class GlowService {
     GlowEntity entity = glowServiceRspBody.rspToEntity();
     if (entity.isNoData()) {
       log.error("GlowEntity is no data, address = {}, rsp = {}", location, entity);
-      return new GlowEntity();
+      return null;
     }
     cache.put(location, entity);
     return entity;

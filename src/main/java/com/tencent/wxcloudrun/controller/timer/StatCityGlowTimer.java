@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.timer;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
+import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.service.manager.GlowManager;
@@ -25,6 +26,8 @@ public class StatCityGlowTimer {
   private final EmailService emailService;
 
   private final GlowManager glowManager;
+
+  private final SunGlowService glowService;
 
   @PostConstruct
   public void runOnceOnStartup() {

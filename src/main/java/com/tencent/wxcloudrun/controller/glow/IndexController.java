@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.glow;
 
 import com.tencent.wxcloudrun.client.qwen.AliService;
+import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.dataobject.AccessDO;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
@@ -32,6 +33,8 @@ public class IndexController {
 
   private final GlowManager glowManager;
 
+  private final SunGlowService sunGlowService;
+
   /**
    * 处理微信消息请求 依赖接口：
    *
@@ -62,7 +65,8 @@ public class IndexController {
 
     String city = aliService.parseCity(req.getContent());
 
-    String content = glowManager.getGlow(city, false);
+    String content =
+        sunGlowService.formatGlowStrRes(sunGlowService.queryGlowWithFilter(city, false));
 
     rsp.setToUserName(req.getFromUserName());
     rsp.setFromUserName(req.getToUserName());
@@ -83,7 +87,6 @@ public class IndexController {
     } else {
       log.info("cost= {}ms , rsp = {}", cost, rsp);
     }
-
     return rsp;
   }
 }

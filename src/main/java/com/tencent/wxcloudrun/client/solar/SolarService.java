@@ -40,11 +40,14 @@ public class SolarService {
     ResponseEntity<SolarRsp> solarServiceRsp = restTemplate.getForEntity(url, SolarRsp.class);
     if (solarServiceRsp.getStatusCode().is2xxSuccessful()) {
       SolarRsp solarRsp = solarServiceRsp.getBody();
-      if (solarRsp != null && solarRsp.getStatus() == 0) {
+      if (solarRsp != null && solarRsp.getCode() == 0) {
         cache.put(location, solarRsp);
         log.info(
             "querySolar rsp = {}, cost = {}ms", solarRsp, System.currentTimeMillis() - startTime);
         return solarRsp;
+      } else {
+        log.error("querySolar error, location = {}, rsp = {}", location, solarRsp);
+        return null;
       }
     }
     return null;

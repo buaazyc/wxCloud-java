@@ -11,6 +11,12 @@ import lombok.Data;
 @Data
 public class SolarRsp {
 
+  @JsonProperty("code")
+  private int code;
+
+  @JsonProperty("msg")
+  private String msg;
+
   @JsonProperty("status")
   private int status;
 
