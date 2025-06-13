@@ -101,8 +101,10 @@ public class IndexController {
           try {
             // 记录访问记录
             accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
-            // 记录城市
-            cityMapper.insertCity(new CityDO(req.getContent(), city));
+            // 如果查询结果不为空，记录城市
+            if (!"".equals(content)) {
+              cityMapper.insertCity(new CityDO(req.getContent(), city));
+            }
             log.info("async success cost = {}ms", System.currentTimeMillis() - startInsetAccess);
           } catch (Exception e) {
             log.error("insertAccess failed with exception: ", e);
