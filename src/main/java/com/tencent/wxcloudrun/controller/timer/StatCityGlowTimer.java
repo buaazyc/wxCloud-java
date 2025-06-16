@@ -36,7 +36,7 @@ public class StatCityGlowTimer {
 
   @PostConstruct
   public void runOnceOnStartup() {
-    refreshGlow();
+    //    refreshGlow();
   }
 
   /** 定时统计火烧云情况，并发送邮件 */
