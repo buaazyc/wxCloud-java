@@ -46,15 +46,15 @@ public class SunGlowEntity implements Serializable {
   }
 
   public String detailStrFormat() {
-    if (isBad()) {
-      return getEvent().getDesc() + " 不烧\n";
-    }
+    //    if (isBad()) {
+    //      return getEvent().getDesc() + " 不烧\n";
+    //    }
     return getEvent().getDesc()
         + " "
         + getFormattedEventTime()
         + "\n鲜艳度："
         + getStrQuality()
-        + "\n污染："
+        + "\n气溶胶："
         + getStrAod();
   }
 

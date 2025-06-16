@@ -1,5 +1,7 @@
 package com.tencent.wxcloudrun.domain.utils;
 
+import com.tencent.wxcloudrun.domain.constant.AmPmEnum;
+import com.tencent.wxcloudrun.domain.constant.DayEnum;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
@@ -32,23 +34,20 @@ public class TimeUtils {
     return Period.between(startDate, endDate).getDays();
   }
 
-  public static String parseDay(long days) {
+  public static DayEnum parseDay(long days) {
     if (days == 0) {
-      return "今天";
+      return DayEnum.TODAY;
     }
     if (days == 1) {
-      return "明天";
+      return DayEnum.TOMORROW;
     }
     if (days == 2) {
-      return "后天";
+      return DayEnum.AFTER_TOMORROW;
     }
-    if (days == 3) {
-      return "大后天";
-    }
-    return "";
+    return DayEnum.UNKNOWN;
   }
 
-  public static String getAmPm(ZonedDateTime dateTime) {
-    return dateTime.getHour() < 12 ? "上午" : "下午";
+  public static AmPmEnum getAmPm(ZonedDateTime dateTime) {
+    return dateTime.getHour() < 12 ? AmPmEnum.AM : AmPmEnum.PM;
   }
 }

@@ -2,8 +2,11 @@ package com.tencent.wxcloudrun.client.sun;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.tencent.wxcloudrun.domain.constant.AmPmEnum;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
+import com.tencent.wxcloudrun.domain.utils.HttpUtils;
+import com.tencent.wxcloudrun.domain.utils.TimeUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -13,8 +16,6 @@ import java.util.concurrent.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,7 +79,7 @@ public class SunGlowService {
       return cacheGlows;
     }
 
-    ArrayList<SunGlowEntity> glows = queryGlow(address);
+    ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
     log.info(
         "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
     // 如果glows的长度=EVENTS的长度，则缓存
@@ -96,7 +97,7 @@ public class SunGlowService {
       // 使用exchange方法发送请求
       ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
           restTemplate.exchange(
-              url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
+              url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), SunGlowServiceRsp.class);
       SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
       if (glowServiceRspBody == null) {
         log.error("queryGlow glowServiceRspBody is null");
@@ -130,7 +131,7 @@ public class SunGlowService {
     List<CompletableFuture<SunGlowEntity>> futures = new ArrayList<>();
     String traceId = MDC.get("traceid");
 
-    for (EventEnum event : EVENTS) {
+    for (EventEnum event : getEvents()) {
       CompletableFuture<SunGlowEntity> future =
           CompletableFuture.supplyAsync(
               () -> {
@@ -140,7 +141,10 @@ public class SunGlowService {
                 try {
                   ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
                       restTemplate.exchange(
-                          url, HttpMethod.GET, getStringHttpEntity(), SunGlowServiceRsp.class);
+                          url,
+                          HttpMethod.GET,
+                          HttpUtils.getStringHttpEntity(),
+                          SunGlowServiceRsp.class);
                   SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
                   if (glowServiceRspBody == null) {
                     log.error("glowServiceRspBody is null");
@@ -203,30 +207,14 @@ public class SunGlowService {
     return glowArrayList;
   }
 
-  private static HttpEntity<String> getStringHttpEntity() {
-    HttpHeaders headers = new HttpHeaders();
-    // 模拟Chrome浏览器（基于macOS）
-    headers.set(
-        "User-Agent",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36");
-    headers.set("Accept", "*/*");
-    headers.set("Accept-Language", "zh-CN,zh;q=0.9");
-    headers.set("Accept-Encoding", "gzip, deflate, br, zstd");
-    headers.set(
-        "Sec-Ch-Ua",
-        "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"");
-    headers.set("Sec-Ch-Ua-Mobile", "?0");
-    headers.set("Sec-Ch-Ua-Platform", "\"macOS\"");
-    headers.set("Sec-Fetch-Dest", "empty");
-    headers.set("Sec-Fetch-Mode", "cors");
-    headers.set("Sec-Fetch-Site", "same-origin");
-    headers.set("X-Requested-With", "XMLHttpRequest");
-    headers.set("Connection", "keep-alive");
-    headers.set("Priority", "u=1, i");
-    headers.set("X-Forwarded-For", "192.168.1.1");
-    headers.set("Host", "sunsetbot.top");
-
-    // 创建带请求头的请求实体
-    return new HttpEntity<>(headers);
+  private EventEnum[] getEvents() {
+    AmPmEnum amPm = TimeUtils.getAmPm(TimeUtils.today());
+    if (amPm == AmPmEnum.AM) {
+      return new EventEnum[] {EventEnum.RISE_1, EventEnum.SUNSET_1};
+    }
+    if (amPm == AmPmEnum.PM) {
+      return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
+    }
+    return EVENTS;
   }
 }
