@@ -83,7 +83,7 @@ public class SunGlowService {
     log.info(
         "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
     // 如果glows的长度=EVENTS的长度，则缓存
-    if (glows.size() == EVENTS.length) {
+    if (glows.size() == getEvents().length) {
       cache.put(address, glows);
     }
     return glows;
