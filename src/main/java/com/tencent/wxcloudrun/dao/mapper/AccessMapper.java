@@ -15,4 +15,6 @@ public interface AccessMapper {
   ArrayList<String> getCityList();
 
   String getAccessKey(String req);
+
+  Integer getTodayCount();
 }

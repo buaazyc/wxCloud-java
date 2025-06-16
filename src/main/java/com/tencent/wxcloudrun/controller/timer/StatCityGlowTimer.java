@@ -5,6 +5,7 @@ import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
+import com.tencent.wxcloudrun.domain.utils.ResourceMonitor;
 import com.tencent.wxcloudrun.service.manager.GlowManager;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,8 @@ public class StatCityGlowTimer {
 
   private final CityMapper cityMapper;
 
+  private final ResourceMonitor resourceMonitor;
+
   @PostConstruct
   public void runOnceOnStartup() {
     // 测试环境，立即执行
@@ -48,6 +51,13 @@ public class StatCityGlowTimer {
     if (Constants.TEST.equals(System.getenv(Constants.ENV))) {
       //      checkBeautifulGlowWithEmail();
     }
+  }
+
+  /** 每分钟运行，保证服务器不会关机 */
+  @Scheduled(cron = "0 * * * * *", zone = "Asia/Shanghai")
+  public void keepAlive() {
+    log.info("today count is {}", accessMapper.getTodayCount());
+    ResourceMonitor.run();
   }
 
   public void checkBeautifulGlowWithEmail() {

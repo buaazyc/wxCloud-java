@@ -39,4 +39,10 @@
         length(access_key) > 0 AND req = #{req}
         Limit 1;
     </select>
+    <select id="getTodayCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM t_access_record
+        WHERE create_time > UNIX_TIMESTAMP(now()) - 86400
+        AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c";
+    </select>
 </mapper>
