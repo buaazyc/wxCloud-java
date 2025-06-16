@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.domain.utils;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -10,6 +11,7 @@ import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
 
 @Component
+@Slf4j
 public class ResourceMonitor {
 
   private static double maxCpuUsage = 0.0;
@@ -42,10 +44,9 @@ public class ResourceMonitor {
     // 一分钟后停止任务并输出最大值
     scheduler.schedule(
         () -> {
-          System.out.print("过去一分钟内的峰值：\n");
-          System.out.printf("最高 CPU 使用率: %.2f%%\n", maxCpuUsage);
-          System.out.printf("最高内存使用率: %.2f%%\n", maxMemoryUsage);
-          scheduler.shutdownNow(); // 停止调度器
+          log.info("最高cpu = {}, 最高内存 = {}", maxCpuUsage, maxMemoryUsage);
+          // 停止调度器
+          scheduler.shutdownNow();
         },
         60,
         TimeUnit.SECONDS);
@@ -55,7 +56,8 @@ public class ResourceMonitor {
   private static double getCpuUsage(CentralProcessor processor) {
     long[] prevTicks = processor.getSystemCpuLoadTicks();
     try {
-      Thread.sleep(500); // 等待一段时间以计算负载变化
+      // 等待一段时间以计算负载变化
+      Thread.sleep(500);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }

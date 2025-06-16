@@ -27,8 +27,10 @@
     <select id="getCityList" resultType="String">
         SELECT access_key
         FROM t_access_record
-        WHERE length(rsp) > 0 AND create_time > UNIX_TIMESTAMP(now()) - 2851200 AND
-        length(access_key) > 0
+        WHERE create_time > UNIX_TIMESTAMP(now()) - 86400
+        AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
+        AND length(rsp) > 0
+        AND length(access_key) > 0
         GROUP BY access_key;
     </select>
 
@@ -39,10 +41,12 @@
         length(access_key) > 0 AND req = #{req}
         Limit 1;
     </select>
+    
     <select id="getTodayCount" resultType="java.lang.Integer">
         SELECT count(*)
         FROM t_access_record
         WHERE create_time > UNIX_TIMESTAMP(now()) - 86400
         AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c";
     </select>
+
 </mapper>
