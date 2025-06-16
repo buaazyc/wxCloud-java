@@ -35,9 +35,9 @@ public class SunGlowService {
 
   ExecutorService executor = Executors.newFixedThreadPool(10);
 
-  /** 缓存59min */
+  /** 缓存61min，更新时间是60min，这里保证特定列表的城市可以永远可以命中缓存 */
   private final Cache<String, ArrayList<SunGlowEntity>> cache =
-      Caffeine.newBuilder().expireAfterWrite(59, TimeUnit.MINUTES).build();
+      Caffeine.newBuilder().expireAfterWrite(61, TimeUnit.MINUTES).build();
 
   public String formatGlowStrRes(ArrayList<SunGlowEntity> glows) {
     if (glows.isEmpty()) {
@@ -76,9 +76,20 @@ public class SunGlowService {
     if (cacheGlows != null) {
       log.info(
           "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
+
+      // 异步流程更新缓存
+      executor.submit(
+          () -> {
+            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
+            if (updatedGlows.size() == getEvents().length) {
+              cache.put(address, updatedGlows); // 更新缓存
+              log.info("Updated cache with new results.");
+            }
+          });
       return cacheGlows;
     }
 
+    // 未命中缓存时，同步查询结果
     ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
     log.info(
         "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);

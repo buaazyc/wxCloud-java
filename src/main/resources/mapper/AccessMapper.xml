@@ -33,7 +33,7 @@
         AND length(access_key) > 0
         GROUP BY access_key
         ORDER BY count(*) DESC, MAX(create_time) DESC
-        LIMIT 50
+        LIMIT 100
     </select>
 
     <select id="getAccessKey" resultType="java.lang.String">

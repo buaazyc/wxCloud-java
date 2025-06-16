@@ -31,22 +31,20 @@ public class StatCityGlowTimer {
 
   private final CityMapper cityMapper;
 
-  /** 刷新火烧云每个城市的刷新间隔：1min */
-  private static final Long REFRESH_GLOW_TIME = 60 * 1000L;
+  /** 刷新火烧云每个城市的刷新间隔：30s */
+  private static final Long REFRESH_GLOW_TIME = 30 * 1000L;
 
   @PostConstruct
-  public void runOnceOnStartup() {
-    //    refreshGlow();
-  }
+  public void runOnceOnStartup() {}
 
   /** 定时统计火烧云情况，并发送邮件 */
   @Scheduled(cron = "0 13 12 * * *", zone = "Asia/Shanghai")
   public void dayCronTask() {
-    //    checkBeautifulGlowWithEmail();
+    checkBeautifulGlowWithEmail();
   }
 
   /** 定时刷新火烧云情况 */
-  @Scheduled(cron = "12 12 * * * *", zone = "Asia/Shanghai")
+  @Scheduled(cron = "12 40 * * * *", zone = "Asia/Shanghai")
   public void refreshGlowCronTask() {
     refreshGlow();
   }
@@ -55,7 +53,6 @@ public class StatCityGlowTimer {
   @Scheduled(cron = "0 * * * * *", zone = "Asia/Shanghai")
   public void keepAlive() {
     log.info("today access pv is {}", accessMapper.getTodayCount());
-    //    ResourceMonitor.run();
   }
 
   public void checkBeautifulGlowWithEmail() {
