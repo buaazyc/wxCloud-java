@@ -2,7 +2,6 @@ package com.tencent.wxcloudrun.client.sun;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.domain.constant.AmPmEnum;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
 import com.tencent.wxcloudrun.domain.utils.HttpUtils;
@@ -77,9 +76,11 @@ public class SunGlowService {
       log.info(
           "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
 
+      String traceId = MDC.get("traceid");
       // 异步流程更新缓存
       executor.submit(
           () -> {
+            MDC.put("traceid", traceId);
             ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
             if (updatedGlows.size() == getEvents().length) {
               cache.put(address, updatedGlows); // 更新缓存
@@ -219,13 +220,16 @@ public class SunGlowService {
   }
 
   private EventEnum[] getEvents() {
-    AmPmEnum amPm = TimeUtils.getAmPm(TimeUtils.today());
-    if (amPm == AmPmEnum.AM) {
+    int hour = TimeUtils.today().getHour();
+    // 如果当前时间在10点之前，则只查询今天
+    if (hour < 10) {
       return new EventEnum[] {EventEnum.RISE_1, EventEnum.SUNSET_1};
     }
-    if (amPm == AmPmEnum.PM) {
+    // 如果在10点-20点之间，查询今天傍晚和明天早上
+    if (hour < 20) {
       return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
     }
-    return EVENTS;
+    // 如果当前时间在20点之后，则只查询明天
+    return new EventEnum[] {EventEnum.RISE_2, EventEnum.SUNSET_2};
   }
 }
