@@ -51,7 +51,7 @@ public class SunGlowEntity implements Serializable {
     //    }
     return getEvent().getDesc()
         + " "
-        + getFormattedEventTime()
+        + getFormattedOnlyTime()
         + "\n鲜艳度："
         + getStrQuality()
         + "\n气溶胶："
@@ -59,6 +59,10 @@ public class SunGlowEntity implements Serializable {
   }
 
   public String getFormattedEventTime() {
+    return eventTime.replace("<br>", " ");
+  }
+
+  public String getFormattedOnlyTime() {
     return eventTime.replace("<br>", " ").split(" ")[1];
   }
 

@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller.timer;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
+import com.tencent.wxcloudrun.client.self.SelfService;
 import com.tencent.wxcloudrun.client.sun.SunGlowService;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.dao.mapper.CityMapper;
@@ -31,22 +32,26 @@ public class StatCityGlowTimer {
 
   private final CityMapper cityMapper;
 
+  private final SelfService selfService;
+
   /** 刷新火烧云每个城市的刷新间隔：30s */
   private static final Long REFRESH_GLOW_TIME = 30 * 1000L;
 
   @PostConstruct
-  public void runOnceOnStartup() {}
+  public void runOnceOnStartup() {
+    //    selfService.keepAlive();
+  }
 
   /** 定时统计火烧云情况，并发送邮件 */
   @Scheduled(cron = "0 13 12 * * *", zone = "Asia/Shanghai")
   public void dayCronTask() {
-    checkBeautifulGlowWithEmail();
+    //    checkBeautifulGlowWithEmail();
   }
 
   /** 定时刷新火烧云情况 */
   @Scheduled(cron = "12 40 * * * *", zone = "Asia/Shanghai")
   public void refreshGlowCronTask() {
-    refreshGlow();
+    //    refreshGlow();
   }
 
   /** 每分钟运行，保证服务器不会关机 */

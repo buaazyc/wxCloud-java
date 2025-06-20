@@ -27,9 +27,7 @@
     <select id="getCityList" resultType="String">
         SELECT access_key
         FROM t_access_record
-        WHERE create_time > UNIX_TIMESTAMP(now()) - 86400 * 7
-        AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
-        AND length(rsp) > 0
+        WHERE length(rsp) > 0
         AND length(access_key) > 0
         GROUP BY access_key
         ORDER BY count(*) DESC, MAX(create_time) DESC
