@@ -27,11 +27,11 @@
     <select id="getCityList" resultType="String">
         SELECT access_key
         FROM t_access_record
-        WHERE length(rsp) > 0
+        WHERE length(rsp) > 0 and from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
         AND length(access_key) > 0
         GROUP BY access_key
         ORDER BY count(*) DESC, MAX(create_time) DESC
-        LIMIT 100
+        LIMIT 120
     </select>
 
     <select id="getAccessKey" resultType="java.lang.String">
@@ -42,10 +42,16 @@
         Limit 1;
     </select>
 
-    <select id="getTodayCount" resultType="java.lang.Integer">
+    <select id="getTodayPv" resultType="java.lang.Integer">
         SELECT count(*)
         FROM t_access_record
-        WHERE create_time > UNIX_TIMESTAMP(now()) - 86400
+        WHERE create_time >= UNIX_TIMESTAMP(DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00'))
+        AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c";
+    </select>
+    <select id="getTodayUv" resultType="java.lang.Integer">
+        SELECT count(DISTINCT from_user_name)
+        FROM t_access_record
+        WHERE create_time >= UNIX_TIMESTAMP(DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00'))
         AND from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c";
     </select>
 

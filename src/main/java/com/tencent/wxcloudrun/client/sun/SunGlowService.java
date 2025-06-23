@@ -76,17 +76,17 @@ public class SunGlowService {
       log.info(
           "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
 
-      String traceId = MDC.get("traceid");
+      //      String traceId = MDC.get("traceid");
       // 异步流程更新缓存
-      executor.submit(
-          () -> {
-            MDC.put("traceid", traceId);
-            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
-            if (updatedGlows.size() == getEvents().length) {
-              cache.put(address, updatedGlows); // 更新缓存
-              log.info("Updated cache with new results.");
-            }
-          });
+      //      executor.submit(
+      //          () -> {
+      //            MDC.put("traceid", traceId);
+      //            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
+      //            if (updatedGlows.size() == getEvents().length) {
+      //              cache.put(address, updatedGlows); // 更新缓存
+      //              log.info("Updated cache with new results.");
+      //            }
+      //          });
       return cacheGlows;
     }
 

@@ -16,5 +16,7 @@ public interface AccessMapper {
 
   String getAccessKey(String req);
 
-  Integer getTodayCount();
+  Integer getTodayPv();
+
+  Integer getTodayUv();
 }

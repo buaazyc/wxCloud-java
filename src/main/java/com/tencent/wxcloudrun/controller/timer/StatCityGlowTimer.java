@@ -56,8 +56,8 @@ public class StatCityGlowTimer {
 
   /** 每分钟运行，保证服务器不会关机 */
   @Scheduled(cron = "0 * * * * *", zone = "Asia/Shanghai")
-  public void keepAlive() {
-    log.info("today access pv is {}", accessMapper.getTodayCount());
+  public void statPvUv() {
+    log.info("today access pv = {} uv = {}", accessMapper.getTodayPv(), accessMapper.getTodayUv());
   }
 
   public void checkBeautifulGlowWithEmail() {
