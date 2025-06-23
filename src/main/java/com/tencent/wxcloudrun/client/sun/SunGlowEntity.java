@@ -54,7 +54,7 @@ public class SunGlowEntity implements Serializable {
         + getFormattedOnlyTime()
         + "\n鲜艳度："
         + getStrQuality()
-        + "\n气溶胶："
+        + "\n浑浊度："
         + getStrAod();
   }
 

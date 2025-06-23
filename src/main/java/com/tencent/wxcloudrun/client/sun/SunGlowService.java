@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
-import com.tencent.wxcloudrun.domain.utils.HttpUtils;
 import com.tencent.wxcloudrun.domain.utils.TimeUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -15,7 +14,6 @@ import java.util.concurrent.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -76,17 +74,17 @@ public class SunGlowService {
       log.info(
           "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
 
-      //      String traceId = MDC.get("traceid");
       // 异步流程更新缓存
-      //      executor.submit(
-      //          () -> {
-      //            MDC.put("traceid", traceId);
-      //            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
-      //            if (updatedGlows.size() == getEvents().length) {
-      //              cache.put(address, updatedGlows); // 更新缓存
-      //              log.info("Updated cache with new results.");
-      //            }
-      //          });
+      String traceId = MDC.get("traceid");
+      executor.submit(
+          () -> {
+            MDC.put("traceid", traceId);
+            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
+            if (updatedGlows.size() == getEvents().length) {
+              cache.put(address, updatedGlows);
+              log.info("Updated cache with new results");
+            }
+          });
       return cacheGlows;
     }
 
@@ -99,44 +97,6 @@ public class SunGlowService {
       cache.put(address, glows);
     }
     return glows;
-  }
-
-  private ArrayList<SunGlowEntity> queryGlow(String address) {
-    ArrayList<SunGlowEntity> glowArrayList = new ArrayList<>();
-    for (EventEnum event : EVENTS) {
-      long startTime = System.currentTimeMillis();
-      String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
-      // 使用exchange方法发送请求
-      ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
-          restTemplate.exchange(
-              url, HttpMethod.GET, HttpUtils.getStringHttpEntity(), SunGlowServiceRsp.class);
-      SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
-      if (glowServiceRspBody == null) {
-        log.error("queryGlow glowServiceRspBody is null");
-        return new ArrayList<>();
-      }
-      SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
-      glowRsp.setEvent(event);
-      if (!glowRsp.ok()) {
-        log.error(
-            "queryGlow glow query error, address = {}, event = {}, rsp = {}",
-            address,
-            event.getQueryLabel(),
-            glowRsp);
-        continue;
-      }
-      if (glowRsp.isNotReady()) {
-        log.warn(
-            "queryGlow glow query not ready, address = {}, event = {}, rsp = {}",
-            address,
-            event.getQueryLabel(),
-            glowRsp);
-        continue;
-      }
-      glowArrayList.add(glowRsp);
-      log.info("queryGlow cost = {}ms glow: {}", System.currentTimeMillis() - startTime, glowRsp);
-    }
-    return glowArrayList;
   }
 
   private ArrayList<SunGlowEntity> queryGlowWithThread(String address) {
