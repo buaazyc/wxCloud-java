@@ -150,19 +150,15 @@ public class SunGlowService {
                 MDC.put("traceid", traceId);
                 long startTime = System.currentTimeMillis();
                 String url = new SunGlowServiceReq(address, event.getQueryLabel()).selectCityUrl();
+                log.info("queryGlow url: {}", url);
                 try {
-                  ResponseEntity<SunGlowServiceRsp> glowServiceRsp =
-                      restTemplate.exchange(
-                          url,
-                          HttpMethod.GET,
-                          HttpUtils.getStringHttpEntity(),
-                          SunGlowServiceRsp.class);
-                  SunGlowServiceRsp glowServiceRspBody = glowServiceRsp.getBody();
+                  ResponseEntity<SunGlowServiceRsp> response =
+                      restTemplate.getForEntity(url, SunGlowServiceRsp.class);
+                  SunGlowServiceRsp glowServiceRspBody = response.getBody();
                   if (glowServiceRspBody == null) {
                     log.error("glowServiceRspBody is null");
                     return null;
                   }
-
                   SunGlowEntity glowRsp = glowServiceRspBody.toGlow();
                   glowRsp.setEvent(event);
 
