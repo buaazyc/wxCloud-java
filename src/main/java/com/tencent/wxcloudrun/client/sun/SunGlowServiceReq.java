@@ -19,6 +19,7 @@ public class SunGlowServiceReq {
 
   public String selectCityUrl() {
     return String.format(
-        "%s?intend=select_city&query_city=%s&event_date=None&event=%s", URL, address, event);
+        "%s?intend=select_city&query_city=%s&event_date=None&event=%s&model=EC",
+        URL, address, event);
   }
 }
