@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
-import com.tencent.wxcloudrun.domain.utils.TimeUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -26,15 +25,11 @@ import org.springframework.web.client.RestTemplate;
 public class SunGlowService {
   @Autowired private RestTemplate restTemplate;
 
-  private static final EventEnum[] EVENTS = {
-    EventEnum.RISE_1, EventEnum.SUNSET_1, EventEnum.RISE_2, EventEnum.SUNSET_2
-  };
-
   ExecutorService executor = Executors.newFixedThreadPool(10);
 
-  /** 缓存61min，更新时间是60min，这里保证特定列表的城市可以永远可以命中缓存 */
+  /** 缓存2h */
   private final Cache<String, ArrayList<SunGlowEntity>> cache =
-      Caffeine.newBuilder().expireAfterWrite(61, TimeUnit.MINUTES).build();
+      Caffeine.newBuilder().expireAfterWrite(120, TimeUnit.MINUTES).build();
 
   public String formatGlowStrRes(ArrayList<SunGlowEntity> glows) {
     if (glows.isEmpty()) {
@@ -176,16 +171,19 @@ public class SunGlowService {
   }
 
   private EventEnum[] getEvents() {
-    int hour = TimeUtils.today().getHour();
-    // 如果当前时间在10点之前，则只查询今天
-    if (hour < 10) {
-      return new EventEnum[] {EventEnum.RISE_1, EventEnum.SUNSET_1};
-    }
-    // 如果在10点-20点之间，查询今天傍晚和明天早上
-    if (hour < 20) {
-      return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
-    }
-    // 如果当前时间在20点之后，则只查询明天
-    return new EventEnum[] {EventEnum.RISE_2, EventEnum.SUNSET_2};
+    return new EventEnum[] {
+      EventEnum.RISE_1, EventEnum.SUNSET_1, EventEnum.RISE_2, EventEnum.SUNSET_2
+    };
+//    int hour = TimeUtils.today().getHour();
+//    // 如果当前时间在10点之前，则只查询今天
+//    if (hour < 10) {
+//      return new EventEnum[] {EventEnum.RISE_1, EventEnum.SUNSET_1};
+//    }
+//    // 如果在10点-20点之间，查询今天傍晚和明天早上
+//    if (hour < 20) {
+//      return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
+//    }
+//    // 如果当前时间在20点之后，则只查询明天
+//    return new EventEnum[] {EventEnum.RISE_2, EventEnum.SUNSET_2};
   }
 }
