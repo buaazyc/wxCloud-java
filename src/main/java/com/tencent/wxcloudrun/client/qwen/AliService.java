@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import static com.tencent.wxcloudrun.domain.constant.Constants.NO_CITY;
+
 /**
  * @author zhangyichuan
  * @date 2025/5/21
@@ -47,7 +49,10 @@ public class AliService {
           + "最终格式为xx市（不要有市的后缀），即没有'市'这个字眼"
           + "例如，用户输入大亚湾，那么你识别到这是指惠州大亚湾，那么你就输出到惠州这一层级，输出为惠州；"
           + "而用户输入南山区，你就直接输出深圳；如果用户输入洛阳，你就直接输出洛阳。"
-          + "只输出最终的结果，不需要输出其他任何多余的文字。";
+          + "只输出最终的结果，不需要输出其他任何多余的文字。"
+          + "如果无法识别，则输出'"
+          + NO_CITY
+          + "'";
 
   public String parseCity(String inputContent) {
     long startTime = System.currentTimeMillis();

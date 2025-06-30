@@ -12,4 +12,6 @@ public class Constants {
   public static final String ENV = "ENV";
 
   public static final Long TIME_OUT = 5000L;
+
+  public static final String NO_CITY = "无法识别";
 }

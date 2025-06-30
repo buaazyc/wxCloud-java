@@ -44,19 +44,7 @@ public class IndexController {
   private final SunGlowService sunGlowService;
 
   /**
-   * 处理微信消息请求 依赖接口：
-   *
-   * <p>1. 阿里云qwen接口：解析城市
-   *
-   * <p>2. 高德geocode接口：根据城市获取经纬度
-   *
-   * <p>3. 地理云接口：查询火烧云情况
-   *
-   * <p>4. mysql：记录访问日志
-   *
-   * <p>5. 地理云接口：查询日出日落
-   *
-   * <p>响应时间必须控制在5s以内
+   * 处理微信消息请求
    *
    * @param req 微信请求参数
    * @return 响应消息
@@ -68,6 +56,9 @@ public class IndexController {
     if (req == null || req.getContent() == null) {
       return rsp;
     }
+    rsp.setToUserName(req.getFromUserName());
+    rsp.setFromUserName(req.getToUserName());
+    rsp.setCreateTime(req.getCreateTime());
     if (Constants.TEST.equals(req.getMsgId())) {
       req.setMsgId(req.getMsgId() + "_" + System.currentTimeMillis());
     }
@@ -75,13 +66,12 @@ public class IndexController {
     log.info("req={}", req);
 
     String city = aliService.parseCity(req.getContent());
-
-    String content =
-        sunGlowService.formatGlowStrRes(sunGlowService.queryGlowWithFilter(city, false));
-
-    rsp.setToUserName(req.getFromUserName());
-    rsp.setFromUserName(req.getToUserName());
-    rsp.setCreateTime(req.getCreateTime());
+    String content;
+    if (!Constants.NO_CITY.equals(city)) {
+      content = sunGlowService.formatGlowStrRes(sunGlowService.queryGlowWithFilter(city, false));
+    } else {
+      content = "";
+    }
     rsp.setContent(content);
 
     // 统计耗时，打印结果
@@ -97,7 +87,6 @@ public class IndexController {
         () -> {
           MDC.put("traceid", req.getMsgId());
           long startInsetAccess = System.currentTimeMillis();
-
           try {
             // 记录访问记录
             accessMapper.insertAccess(new AccessDO(headers, req, rsp, "glow", city));
@@ -110,7 +99,6 @@ public class IndexController {
             log.error("insertAccess failed with exception: ", e);
           }
         });
-
     return rsp;
   }
 }
