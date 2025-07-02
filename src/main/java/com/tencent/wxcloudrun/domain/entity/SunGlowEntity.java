@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.client.sun;
+package com.tencent.wxcloudrun.domain.entity;
 
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
 import java.io.Serializable;
@@ -36,9 +36,9 @@ public class SunGlowEntity implements Serializable {
   }
 
   public boolean isBeautiful() {
-    return (getNumQuality() >= 0.4 && getNumAod() < 0.4)
+    return (getNumQuality() >= 0.5 && getNumAod() < 0.3)
         || (getNumQuality() >= 0.6 && getNumAod() < 0.5)
-        || getNumQuality() >= 1;
+        || getNumQuality() >= 0.7;
   }
 
   public boolean isBad() {
@@ -46,9 +46,6 @@ public class SunGlowEntity implements Serializable {
   }
 
   public String detailStrFormat() {
-    //    if (isBad()) {
-    //      return getEvent().getDesc() + " 不烧\n";
-    //    }
     return getEvent().getDesc()
         + " "
         + getFormattedOnlyTime()
@@ -88,7 +85,8 @@ public class SunGlowEntity implements Serializable {
   }
 
   public String getFormattedSummary() {
-    String cleanText = summary.replace("&ensp;", "").replace("<b>", "").replace("</b>", "");
+    String cleanText =
+        summary.replace("&ensp;", "").replace("<b>", "").replace("</b>", "").replace("EC-", "");
     // 按】分割并获取第一部分,加上】
     return cleanText.split("】")[0] + "】";
   }

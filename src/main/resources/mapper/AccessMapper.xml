@@ -27,11 +27,13 @@
     <select id="getCityList" resultType="String">
         SELECT access_key
         FROM t_access_record
-        WHERE length(rsp) > 0 and from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
+        WHERE length(rsp) > 0
+        and from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
         AND length(access_key) > 0
         GROUP BY access_key
+        HAVING count(*) > 2
         ORDER BY count(*) DESC, MAX(create_time) DESC
-        LIMIT 120
+        LIMIT 40
     </select>
 
     <select id="getAccessKey" resultType="java.lang.String">

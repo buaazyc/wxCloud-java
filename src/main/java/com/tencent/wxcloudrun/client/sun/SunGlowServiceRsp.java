@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.client.sun;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tencent.wxcloudrun.domain.entity.SunGlowEntity;
 import lombok.Data;
 
 /**

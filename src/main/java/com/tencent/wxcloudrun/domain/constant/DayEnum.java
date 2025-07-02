@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class DayEnum {
 
-  public static final DayEnum UNKNOWN = new DayEnum("unknown", "位置");
+  public static final DayEnum UNKNOWN = new DayEnum("unknown", "未知");
 
   public static final DayEnum TODAY = new DayEnum("today", "今天");
 

@@ -1,13 +1,14 @@
 package com.tencent.wxcloudrun.controller.glow;
 
 import com.tencent.wxcloudrun.client.qwen.AliService;
-import com.tencent.wxcloudrun.client.sun.SunGlowService;
+import com.tencent.wxcloudrun.client.sun.GlowService;
 import com.tencent.wxcloudrun.dao.dataobject.AccessDO;
 import com.tencent.wxcloudrun.dao.dataobject.CityDO;
 import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
-import com.tencent.wxcloudrun.service.manager.GlowManager;
+import com.tencent.wxcloudrun.domain.constant.QueryGlowTypeEnum;
+import com.tencent.wxcloudrun.domain.entity.QueryGlowEntity;
 import com.tencent.wxcloudrun.service.provider.WxRequest;
 import com.tencent.wxcloudrun.service.provider.WxResponse;
 import java.util.Map;
@@ -39,9 +40,7 @@ public class IndexController {
 
   private final AliService aliService;
 
-  private final GlowManager glowManager;
-
-  private final SunGlowService sunGlowService;
+  private final GlowService glowService;
 
   /**
    * 处理微信消息请求
@@ -68,7 +67,8 @@ public class IndexController {
     String city = aliService.parseCity(req.getContent());
     String content;
     if (!Constants.NO_CITY.equals(city)) {
-      content = sunGlowService.formatGlowStrRes(sunGlowService.queryGlowWithFilter(city, false));
+      QueryGlowEntity queryGlowEntity = new QueryGlowEntity(city, QueryGlowTypeEnum.QUERY);
+      content = glowService.formatGlowStrRes(glowService.queryGlow(queryGlowEntity));
     } else {
       content = "";
     }

@@ -4,6 +4,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.EventEnum;
+import com.tencent.wxcloudrun.domain.constant.QueryGlowTypeEnum;
+import com.tencent.wxcloudrun.domain.entity.QueryGlowEntity;
+import com.tencent.wxcloudrun.domain.entity.SunGlowEntity;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Slf4j
 @Service
-public class SunGlowService {
+public class GlowService {
   @Autowired private RestTemplate restTemplate;
 
   ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -37,14 +40,26 @@ public class SunGlowService {
     }
     StringBuilder content = new StringBuilder(glows.get(0).getFormattedSummary() + "火烧云预测\n");
     for (SunGlowEntity glow : glows) {
-      content.append("\n").append(glow.detailStrFormat()).append("\n------------------------");
+      content.append("\n").append(glow.detailStrFormat()).append("\n-------------------");
     }
     return content.toString();
   }
 
-  public ArrayList<SunGlowEntity> queryGlowWithFilter(String address, boolean filter) {
-    ArrayList<SunGlowEntity> glowRes = queryGlowResWithCache(address);
-    if (!filter) {
+  public String formatGlowStatStrRes(ArrayList<SunGlowEntity> glows) {
+    if (glows.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder content = new StringBuilder(glows.get(0).getFormattedSummary() + "\n");
+    for (SunGlowEntity glow : glows) {
+      content.append("\n").append(glow.detailStrFormat()).append("\n");
+    }
+    return content.toString();
+  }
+
+  public ArrayList<SunGlowEntity> queryGlow(QueryGlowEntity queryGlowEntity) {
+    ArrayList<SunGlowEntity> glowRes = queryGlowResWithCache(queryGlowEntity);
+    if (QueryGlowTypeEnum.QUERY.equals(queryGlowEntity.getQueryType())) {
       return glowRes;
     }
     // 过滤掉不美的和过去的
@@ -62,21 +77,27 @@ public class SunGlowService {
     return glowResFiltered;
   }
 
-  public ArrayList<SunGlowEntity> queryGlowResWithCache(String address) {
+  public ArrayList<SunGlowEntity> queryGlowResWithCache(QueryGlowEntity queryGlowEntity) {
     long startTime = System.currentTimeMillis();
-    ArrayList<SunGlowEntity> cacheGlows = cache.getIfPresent(address);
+    ArrayList<SunGlowEntity> cacheGlows = cache.getIfPresent(queryGlowEntity.getCity());
     if (cacheGlows != null) {
       log.info(
-          "cache hit, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
+          "cache hit, cost = {}ms address = {}",
+          System.currentTimeMillis() - startTime,
+          queryGlowEntity);
 
       // 异步流程更新缓存
       String traceId = MDC.get("traceid");
       executor.submit(
           () -> {
+            // 如果环境变量ASYNC_UPDATE=true，则异步更新缓存
+            if (!"true".equals(System.getenv("ASYNC_UPDATE"))) {
+              return;
+            }
             MDC.put("traceid", traceId);
-            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(address);
-            if (updatedGlows.size() == getEvents().length) {
-              cache.put(address, updatedGlows);
+            ArrayList<SunGlowEntity> updatedGlows = queryGlowWithThread(queryGlowEntity);
+            if (updatedGlows.size() == getEvents(queryGlowEntity.getQueryType()).length) {
+              cache.put(queryGlowEntity.getCity(), updatedGlows);
               log.info("Updated cache with new results");
             }
           });
@@ -84,21 +105,24 @@ public class SunGlowService {
     }
 
     // 未命中缓存时，同步查询结果
-    ArrayList<SunGlowEntity> glows = queryGlowWithThread(address);
+    ArrayList<SunGlowEntity> glows = queryGlowWithThread(queryGlowEntity);
     log.info(
-        "cache miss, cost = {}ms address = {}", System.currentTimeMillis() - startTime, address);
+        "cache miss, cost = {}ms address = {}",
+        System.currentTimeMillis() - startTime,
+        queryGlowEntity);
     // 如果glows的长度=EVENTS的长度，则缓存
-    if (glows.size() == getEvents().length) {
-      cache.put(address, glows);
+    if (glows.size() == getEvents(queryGlowEntity.getQueryType()).length) {
+      cache.put(queryGlowEntity.getCity(), glows);
     }
     return glows;
   }
 
-  private ArrayList<SunGlowEntity> queryGlowWithThread(String address) {
+  private ArrayList<SunGlowEntity> queryGlowWithThread(QueryGlowEntity queryGlowEntity) {
     List<CompletableFuture<SunGlowEntity>> futures = new ArrayList<>();
     String traceId = MDC.get("traceid");
+    String address = queryGlowEntity.getCity();
 
-    for (EventEnum event : getEvents()) {
+    for (EventEnum event : getEvents(queryGlowEntity.getQueryType())) {
       CompletableFuture<SunGlowEntity> future =
           CompletableFuture.supplyAsync(
               () -> {
@@ -170,20 +194,12 @@ public class SunGlowService {
     return glowArrayList;
   }
 
-  private EventEnum[] getEvents() {
+  private EventEnum[] getEvents(QueryGlowTypeEnum queryGlowType) {
+    if (queryGlowType.equals(QueryGlowTypeEnum.STAT)) {
+      return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
+    }
     return new EventEnum[] {
       EventEnum.RISE_1, EventEnum.SUNSET_1, EventEnum.RISE_2, EventEnum.SUNSET_2
     };
-//    int hour = TimeUtils.today().getHour();
-//    // 如果当前时间在10点之前，则只查询今天
-//    if (hour < 10) {
-//      return new EventEnum[] {EventEnum.RISE_1, EventEnum.SUNSET_1};
-//    }
-//    // 如果在10点-20点之间，查询今天傍晚和明天早上
-//    if (hour < 20) {
-//      return new EventEnum[] {EventEnum.SUNSET_1, EventEnum.RISE_2};
-//    }
-//    // 如果当前时间在20点之后，则只查询明天
-//    return new EventEnum[] {EventEnum.RISE_2, EventEnum.SUNSET_2};
   }
 }
