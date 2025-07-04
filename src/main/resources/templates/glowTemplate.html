@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>火烧云预测</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --accent-color: #6CB4EE;
+            --bg-card: #ffffff;
+            --text-color: #333338;
+            --border-radius: 10px;
+            --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: transparent;
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        .container {
+            width: 400px;
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px; /* 减少 padding 以缩小整体宽度 */
+            transition: var(--transition);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .forecast-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px 12px;
+            background-color: #eef7ff;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .event-time {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2b2b2b;
+        }
+
+        .quality,
+        .aod {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .quality span.beautiful {
+            color: #2ECC71;
+            font-weight: bold;
+        }
+
+        .aod span.low-aod {
+            color: #3498DB;
+            font-weight: bold;
+        }
+
+        .qrcode {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px 12px;
+            background-color: #eef7ff;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .qrcode img {
+            width: 30%;
+            height: auto;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${summary}">【浙江省-杭州】</h1>
+    <h2>火烧云预测</h2>
+    <!-- 遍历glows -->
+    <div th:each="glow : ${glows}" class="forecast-item">
+        <div class="event-time" th:text="${glow.eventTime}">今天-日出 05:02:41</div>
+        <div class="quality">
+            鲜艳度：
+            <span th:classappend="${glow.beautiful ? 'beautiful' : ''}" th:text="${glow.qualityStr}">
+                0.18（小烧）
+            </span>
+        </div>
+        <div class="aod">
+            浑浊度：
+            <span th:classappend="${glow.aodLevel <= 0.2 ? 'low-aod' : ''}" th:text="${glow.aodStr}">
+                0.11（水晶）
+            </span>
+        </div>
+    </div>
+    <!-- 添加二维码链接 -->
+    <!--    <div class="qrcode"><img src="/imgs/Echuan.jpg" alt="QR Code"></img></div>-->
+</div>
+</body>
+</html>

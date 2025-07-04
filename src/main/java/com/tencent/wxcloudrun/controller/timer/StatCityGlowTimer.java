@@ -52,9 +52,9 @@ public class StatCityGlowTimer {
       QueryGlowEntity queryGlowEntity = new QueryGlowEntity(city, QueryGlowTypeEnum.STAT);
       String content = glowService.formatGlowStatStrRes(glowService.queryGlow(queryGlowEntity));
 
-      // 保护接口，每个城市查询后休眠10s时间
+      // 保护接口，每个城市查询后休眠一段时间
       try {
-        Thread.sleep(5 * 1000);
+        Thread.sleep(4 * 1000);
       } catch (InterruptedException e) {
         log.error("sleep error", e);
       }

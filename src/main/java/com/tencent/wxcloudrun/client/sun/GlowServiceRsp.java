@@ -1,7 +1,7 @@
 package com.tencent.wxcloudrun.client.sun;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tencent.wxcloudrun.domain.entity.SunGlowEntity;
+import com.tencent.wxcloudrun.domain.entity.GlowEntity;
 import lombok.Data;
 
 /**
@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025/4/30
  */
 @Data
-public class SunGlowServiceRsp {
+public class GlowServiceRsp {
   @JsonProperty("img_summary")
   private String summary;
 
@@ -28,8 +28,8 @@ public class SunGlowServiceRsp {
   @JsonProperty("status")
   private String status;
 
-  public SunGlowEntity toGlow() {
-    SunGlowEntity glow = new SunGlowEntity();
+  public GlowEntity toGlow() {
+    GlowEntity glow = new GlowEntity();
     glow.setSummary(summary);
     glow.setPlaceHolder(placeHolder);
     glow.setAod(aod);

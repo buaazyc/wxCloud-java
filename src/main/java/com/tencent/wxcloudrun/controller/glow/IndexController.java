@@ -8,9 +8,11 @@ import com.tencent.wxcloudrun.dao.mapper.AccessMapper;
 import com.tencent.wxcloudrun.dao.mapper.CityMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.constant.QueryGlowTypeEnum;
+import com.tencent.wxcloudrun.domain.entity.GlowEntity;
 import com.tencent.wxcloudrun.domain.entity.QueryGlowEntity;
 import com.tencent.wxcloudrun.service.provider.WxRequest;
 import com.tencent.wxcloudrun.service.provider.WxResponse;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,7 +70,8 @@ public class IndexController {
     String content;
     if (!Constants.NO_CITY.equals(city)) {
       QueryGlowEntity queryGlowEntity = new QueryGlowEntity(city, QueryGlowTypeEnum.QUERY);
-      content = glowService.formatGlowStrRes(glowService.queryGlow(queryGlowEntity));
+      ArrayList<GlowEntity> glowRes = glowService.queryGlowResWithCache(queryGlowEntity);
+      content = glowService.formatGlowStrRes(glowRes);
     } else {
       content = "";
     }
